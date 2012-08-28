@@ -54,7 +54,7 @@ class Hints {
 
 		$query = $sc->fullPrefixList . ' SELECT * WHERE { ';
 		if ($this->reportID !== false) {
-			$query .= '?hintID gybbo:hintFor <http://getyourbikeback.webgefrickel.de/resource/' . $this->reportID . '> . ';
+			$query .= '?hintID gybbo:hintFor <http://demo.aksw.org/resource/' . $this->reportID . '> . ';
 		} else {
 			$query .= '?hintID gybbo:hintFor ?reportID . ';
 		}

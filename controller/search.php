@@ -124,12 +124,12 @@ class SearchController {
 		$query = $sc->fullPrefixList;
 
 
-		// this finds everything with webgefrickel, bike report etc.
+		// this finds everything with aksw, bike report etc.
 		// TODO remove those fields from the search
 		$query .= '
 			SELECT DISTINCT ?report WHERE {
 
-			?report rdf:type <http://getyourbikeback.webgefrickel.de/ontology/Report> .
+			?report rdf:type <http://demo.aksw.org/ontology/Report> .
 			?report gybbo:describesTheftOf ?bike .
 			OPTIONAL { ?hint gybbo:hintFor ?report . }
 				{

@@ -177,7 +177,7 @@ class ReportDetailsView extends BaseView {
 
 					<h3>Map</h3>
 					<div class="map-wrapper">
-						<div class="bikemap bikemap-report-details" data-bikemaptype="report-details" data-bikemaplon="<?php echo $this->report['lon']; ?>" data-bikemaplat="<?php echo $this->report['lat']; ?>"></div>
+						<div class="bikemap bikemap-report-details" data-bikemapstate="<?php echo $this->report['state']; ?>" data-bikemaptype="report-details" data-bikemaplon="<?php echo $this->report['lon']; ?>" data-bikemaplat="<?php echo $this->report['lat']; ?>"></div>
 					</div>
 
 					<p>
@@ -197,7 +197,7 @@ class ReportDetailsView extends BaseView {
 						</p>
 						<div class="row-fluid">
 							<div class="span6">
-								<div class="bikemap bikemap-add-hint" data-bikemaptype="add-hint" data-bikemaplon="<?php echo $this->report['lon']; ?>" data-bikemaplat="<?php echo $this->report['lat']; ?>"></div>
+								<div class="bikemap bikemap-add-hint" data-bikemaptype="add-hint" data-bikemapstate="<?php echo $this->report['state']; ?>" data-bikemaplon="<?php echo $this->report['lon']; ?>" data-bikemaplat="<?php echo $this->report['lat']; ?>"></div>
 							</div>
 
 							<div class="span6">
@@ -265,7 +265,8 @@ class ReportDetailsView extends BaseView {
 					<div class="bikemap bikemap-hints" data-bikemaptype="hints"
 						data-bikemaplon="<?php echo $this->report['lon']; ?>"
 						data-bikemaplat="<?php echo $this->report['lat']; ?>"
-						data-bikemapreportid="<?php echo $this->reportID; ?>">
+						data-bikemapreportid="<?php echo $this->reportID; ?>"
+						data-bikemapstate="<?php echo $this->report['state']; ?>">
 					</div>
 
 				</div>

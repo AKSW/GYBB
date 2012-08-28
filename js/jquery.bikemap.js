@@ -126,17 +126,17 @@
 					break;
 
 				case 'report-details':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this.registerDefaultEvents();
 					break;
 
 				case 'add-hint':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this.registerAddHintEvents();
 					break;
 
 				case 'hints':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this._eventMapMoveZoomEnd(null);
 					this.zoomToBestFit();
 					break;
@@ -220,22 +220,8 @@
 				//
 				if (this.state !== 'closed' || (this.state === 'closed' && showClosed === true)) {
 					// check the color we want to draw depending on marker-type and status
-					var image;
-					if (this.type === 'report') {
-						// now let's see - what state is it in?
-						if (this.state === 'resolved') {
-							image = 'marker-gold.png';
-						} else if (this.state === 'closed') {
-							image = 'marker-green.png';
-						} else {
-							image = 'marker.png'; // default
-						}
-					} else if (this.type === 'hint') {
-						image = 'marker-blue.png';
-					}
-
+					var image = that.getMarkerImage(this);
 					var lonLat, feature, marker, combined, html;
-					console.log(this.type);
 
 					lonLat = new OpenLayers.LonLat(
 						parseFloat(this.lon), parseFloat(this.lat)
@@ -281,6 +267,26 @@
 				}
 			});
 
+		},
+
+
+		getMarkerImage: function(marker) {
+			var image;
+
+			if (marker.type === 'report') {
+				// now let's see - what state is it in?
+				if (marker.state === 'resolved') {
+					image = 'marker-gold.png';
+				} else if (marker.state === 'closed') {
+					image = 'marker-green.png';
+				} else {
+					image = 'marker.png'; // default
+				}
+			} else if (marker.type === 'hint') {
+				image = 'marker-blue.png';
+			}
+
+			return image;
 		},
 
 
@@ -334,14 +340,20 @@
 		},
 
 
-		drawSingleMarker: function(lon, lat) {
+		drawSingleMarker: function(lon, lat, state) {
+			var that = this;
+			var size = new OpenLayers.Size(21, 25);
+			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+			var image = that.getMarkerImage({ state: state, type: 'report' });
+			var icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
+
 			if (this.singleMarker) {
 				this.singleMarker.destroy();
 			}
 			this.singleMarker = new OpenLayers.Marker(
 				new OpenLayers.LonLat(lon, lat).transform(
 					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
-				)
+				), icon
 			);
 			// add the single marker to the bounds
 			this.bounds.extend(new OpenLayers.LonLat(lon, lat).transform(
@@ -355,6 +367,7 @@
 			// the single hint marker is blue - use that icon
 			var size = new OpenLayers.Size(21, 25);
 			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+			// hints are _always_ blue -- dont check for color here
 			var icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/marker-blue.png', size, offset);
 
 			if (this.singleHintMarker) {
@@ -609,7 +622,7 @@
 		_eventMapClick: function(evt) {
 			var lonLat = this.map.getLonLatFromViewPortPx(evt.xy);
 			lonLat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-			this.drawSingleMarker(lonLat.lon, lonLat.lat);
+			this.drawSingleMarker(lonLat.lon, lonLat.lat, 'open');
 
 			this.$lon.val(lonLat.lon);
 			this.$lat.val(lonLat.lat);
@@ -655,7 +668,7 @@
 					var place = that.suggested[placeID];
 					that._setAddressValues(place);
 					// set the marker on the map
-					that.drawSingleMarker(place.lon, place.lat);
+					that.drawSingleMarker(place.lon, place.lat, 'open');
 					// set map to center around new marker
 					that.zoomMapToCenter(place.lon, place.lat);
 				});

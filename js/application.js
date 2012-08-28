@@ -126,17 +126,17 @@
 					break;
 
 				case 'report-details':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this.registerDefaultEvents();
 					break;
 
 				case 'add-hint':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this.registerAddHintEvents();
 					break;
 
 				case 'hints':
-					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.drawSingleMarker(this.options.startLon, this.options.startLat, this.options.reportState);
 					this._eventMapMoveZoomEnd(null);
 					this.zoomToBestFit();
 					break;
@@ -199,18 +199,13 @@
 		},
 
 
-		drawMarkers: function(markers, color, doNotRedraw) {
+		drawMarkers: function(markers, showClosed, doNotRedraw) {
 			var that = this;
-			var image;
 			var size = new OpenLayers.Size(21, 25);
 			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
 
 			// every time before we draw markers reset the bounds
-			if (color === 'red') {
-				image = 'marker.png';
-			} else if (color === 'blue') {
-				image = 'marker-blue.png';
-			}
+			// TODO?
 
 			// dont create the map and markers newly if doNotRedraw is set to true
 			if (doNotRedraw !== true) {
@@ -219,51 +214,79 @@
 
 			// draw each marker on the map
 			$.each(markers, function() {
-				var lonLat, feature, marker, combined, html;
 
-				lonLat = new OpenLayers.LonLat(
-					parseFloat(this.lon), parseFloat(this.lat)
-				);
-				lonLat.transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					that.map.getProjectionObject()
-				);
+				// only add the marker and draw it if it is not 'closed'
+				// and showClosed === true
+				//
+				if (this.state !== 'closed' || (this.state === 'closed' && showClosed === true)) {
+					// check the color we want to draw depending on marker-type and status
+					var image = that.getMarkerImage(this);
+					var lonLat, feature, marker, combined, html;
 
-				// add the marker-lonLat to the bounds
-				that.bounds.extend(lonLat);
+					lonLat = new OpenLayers.LonLat(
+						parseFloat(this.lon), parseFloat(this.lat)
+					);
+					lonLat.transform(
+						new OpenLayers.Projection("EPSG:4326"),
+						that.map.getProjectionObject()
+					);
 
-				// create a feature with the given html
-				feature = new OpenLayers.Feature(that.markersLayer, lonLat);
-				feature.closeBox = true;
+					// add the marker-lonLat to the bounds
+					that.bounds.extend(lonLat);
 
-				feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.Anchored, {
-					'autoSize': true
-				});
+					// create a feature with the given html
+					feature = new OpenLayers.Feature(that.markersLayer, lonLat);
+					feature.closeBox = true;
 
-				feature.data.popupContentHTML = this.html;
-				feature.data.overflow = "auto";
-				feature.data.icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
+					feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.Anchored, {
+						'autoSize': true
+					});
 
-				// create a marker from that feature, add click events and add it to the map
-				marker = feature.createMarker();
+					feature.data.popupContentHTML = this.html;
+					feature.data.overflow = "auto";
+					feature.data.icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
 
-				// we need a reference to this feature AND this plugin
-				combined = {
-					that: that,
-					feature: feature
-				};
-				marker.events.register("mousedown", combined, that._eventMarkerMousedown);
-				that.markersLayer.addMarker(marker);
+					// create a marker from that feature, add click events and add it to the map
+					marker = feature.createMarker();
 
-				// initialize the popup and hide it
-				feature.popup = feature.createPopup(feature.closeBox);
-				that.map.addPopup(feature.popup);
-				feature.popup.hide();
+					// we need a reference to this feature AND this plugin
+					combined = {
+						that: that,
+						feature: feature
+					};
+					marker.events.register("mousedown", combined, that._eventMarkerMousedown);
+					that.markersLayer.addMarker(marker);
 
-				// add the created feature to the array of features
-				that.features.push(feature);
+					// initialize the popup and hide it
+					feature.popup = feature.createPopup(feature.closeBox);
+					that.map.addPopup(feature.popup);
+					feature.popup.hide();
+
+					// add the created feature to the array of features
+					that.features.push(feature);
+				}
 			});
 
+		},
+
+
+		getMarkerImage: function(marker) {
+			var image;
+
+			if (marker.type === 'report') {
+				// now let's see - what state is it in?
+				if (marker.state === 'resolved') {
+					image = 'marker-gold.png';
+				} else if (marker.state === 'closed') {
+					image = 'marker-green.png';
+				} else {
+					image = 'marker.png'; // default
+				}
+			} else if (marker.type === 'hint') {
+				image = 'marker-blue.png';
+			}
+
+			return image;
 		},
 
 
@@ -274,6 +297,8 @@
 				newMarker = {
 					lon: this.lon,
 					lat: this.lat,
+					type: 'report',
+					state: this.state,
 					html: '<h3>' + this.bikeType + '</h3><p>' +
 						'<strong>City:</strong><br /> ' + this.city + '<br />' +
 						'<strong>Color:</strong><br /> ' + this.color + '<br /><br />' +
@@ -282,7 +307,7 @@
 				markers.push(newMarker);
 			});
 
-			this.drawMarkers(markers, 'red');
+			this.drawMarkers(markers, true);
 		},
 
 
@@ -315,14 +340,20 @@
 		},
 
 
-		drawSingleMarker: function(lon, lat) {
+		drawSingleMarker: function(lon, lat, state) {
+			var that = this;
+			var size = new OpenLayers.Size(21, 25);
+			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+			var image = that.getMarkerImage({ state: state, type: 'report' });
+			var icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
+
 			if (this.singleMarker) {
 				this.singleMarker.destroy();
 			}
 			this.singleMarker = new OpenLayers.Marker(
 				new OpenLayers.LonLat(lon, lat).transform(
 					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
-				)
+				), icon
 			);
 			// add the single marker to the bounds
 			this.bounds.extend(new OpenLayers.LonLat(lon, lat).transform(
@@ -336,6 +367,7 @@
 			// the single hint marker is blue - use that icon
 			var size = new OpenLayers.Size(21, 25);
 			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+			// hints are _always_ blue -- dont check for color here
 			var icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/marker-blue.png', size, offset);
 
 			if (this.singleHintMarker) {
@@ -440,6 +472,8 @@
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
+						type: 'report',
+						state: this.state,
 						// set the html for the marker from type/color etc.
 						html: '<h3>' + this.bikeType + '</h3><p>' +
 							'<strong>Color:</strong><br /> ' + this.color + '<br />' +
@@ -449,7 +483,7 @@
 					};
 					markers.push(marker);
 				});
-				that.drawMarkers(markers, 'red', true);
+				that.drawMarkers(markers, false, true);
 				$('#finished').addClass('finished-reports');
 
 			});
@@ -465,6 +499,7 @@
 					hint = {
 						lon: this.lon,
 						lat: this.lat,
+						type: 'hint',
 						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
 							'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
 							'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
@@ -473,7 +508,7 @@
 					};
 					hints.push(hint);
 				});
-				that.drawMarkers(hints, 'blue', true);
+				that.drawMarkers(hints, false, true);
 				$('#finished').addClass('finished-hints');
 
 			});
@@ -494,6 +529,7 @@
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
+						type: 'hint',
 						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
 							'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
 							'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
@@ -502,7 +538,7 @@
 					};
 					markers.push(marker);
 				});
-				that.drawMarkers(markers, 'blue');
+				that.drawMarkers(markers);
 
 				// now if we have no singlehint set switch back to the first tab. boooo.
 				$('#report-details-view').find('.nav-tabs li').removeClass('active');
@@ -586,7 +622,7 @@
 		_eventMapClick: function(evt) {
 			var lonLat = this.map.getLonLatFromViewPortPx(evt.xy);
 			lonLat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-			this.drawSingleMarker(lonLat.lon, lonLat.lat);
+			this.drawSingleMarker(lonLat.lon, lonLat.lat, 'open');
 
 			this.$lon.val(lonLat.lon);
 			this.$lat.val(lonLat.lat);
@@ -632,7 +668,7 @@
 					var place = that.suggested[placeID];
 					that._setAddressValues(place);
 					// set the marker on the map
-					that.drawSingleMarker(place.lon, place.lat);
+					that.drawSingleMarker(place.lon, place.lat, 'open');
 					// set map to center around new marker
 					that.zoomMapToCenter(place.lon, place.lat);
 				});
@@ -716,14 +752,16 @@ $(document).ready(function() {
 				options = {
 					zoom: 15,
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 
 			} else if (mapType === 'add-hint') {
 				options = {
 					zoom: 15,
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 
 			} else if (mapType === 'hints') {
@@ -731,7 +769,8 @@ $(document).ready(function() {
 					zoom: 15,
 					report: $(this).data('bikemapreportid'),
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 			}
       // create the map with the options above

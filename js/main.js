@@ -28,14 +28,16 @@ $(document).ready(function() {
 				options = {
 					zoom: 15,
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 
 			} else if (mapType === 'add-hint') {
 				options = {
 					zoom: 15,
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 
 			} else if (mapType === 'hints') {
@@ -43,7 +45,8 @@ $(document).ready(function() {
 					zoom: 15,
 					report: $(this).data('bikemapreportid'),
 					startLon: $(this).data('bikemaplon'),
-					startLat: $(this).data('bikemaplat')
+					startLat: $(this).data('bikemaplat'),
+					reportState: $(this).data('bikemapstate')
 				};
 			}
       // create the map with the options above

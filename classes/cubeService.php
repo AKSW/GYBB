@@ -13,7 +13,7 @@ class CubeService {
 	private $curlHelper;
 
 	const REPORTS_WITH_DATE = "SELECT ?s ?t WHERE {
- ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://getyourbikeback.webgefrickel.de/ontology/Report>  .
+ ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://demo.aksw.org/ontology/Report>  .
  ?s <http://purl.org/dc/terms/created> ?t }";
 
 	function __construct() {

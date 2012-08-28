@@ -18,7 +18,7 @@ function Snorql() {
 
     this._browserBase = null;
     this._namespaces = {};
-    this._graph = 'http://getyourbikeback.webgefrickel.de/resource/';
+    this._graph = 'http://demo.aksw.org/resource/';
     this._xsltDOM = null;
 
     this.start = function() {
