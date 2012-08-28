@@ -4,9 +4,7 @@ require_once('views/base.view.php');
 
 class ReportView extends BaseView {
 
-  protected function doShow() {
-
-?>
+	protected function doShow() { ?>
 
 <div class="row-fluid" id="view-report">
 	<form method="post" action="index.php" enctype="multipart/form-data">
@@ -220,8 +218,8 @@ class ReportView extends BaseView {
 	</form>
 </div>
 
-<?php
 
+	<?php
 	}
 }
 

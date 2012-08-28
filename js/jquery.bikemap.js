@@ -410,11 +410,18 @@
 					markers.push(marker);
 				});
 				that.drawMarkers(markers, 'blue');
-				// now switch back to the first tab. boooo.
+
+				// now if we have no singlehint set switch back to the first tab. boooo.
 				$('#report-details-view').find('.nav-tabs li').removeClass('active');
-				$('#report-details-view').find('.nav-tabs li').first().addClass('active');
 				$('#report-details-view').find('.tab-pane').removeClass('active');
-				$('#report-details-view').find('.tab-pane').first().addClass('active');
+
+				if (that._getVariables('showHints') === undefined || that._getVariables('showHints') !== 'true') {
+					$('#report-details-view').find('.nav-tabs li').first().addClass('active');
+					$('#report-details-view').find('.tab-pane').first().addClass('active');
+				} else {
+					$('#report-details-view').find('.nav-tabs li').first().next().addClass('active');
+					$('#report-details-view').find('.tab-pane').first().next().addClass('active');
+				}
 			});
 
 		},
@@ -532,6 +539,16 @@
 			this.$city.val(place.address.city);
 			this.$lon.val(place.lon);
 			this.$lat.val(place.lat);
+		},
+
+
+		// reading get variables with javascript
+		_getVariables: function(id) {
+			var vars = {};
+			var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+				vars[key] = value;
+			});
+			return vars[id];
 		}
 
 

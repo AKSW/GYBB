@@ -7,13 +7,15 @@ require_once('config/config.php');
 class CurlHelper {
 
 
-	public function getSparqlResults($sparqlQuery) {
+	public function getSparqlResults($sparqlQuery, $graph = RESOURCE_GRAPH) {
 		$response = '';
-		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql?default-graph-uri=' . urlencode(DEFAULT_LGD_GRAPH);
+		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql';
+		// TODO now we use every single graph -- dont do this -- use $graph value
+		// ?default-graph-uri=' . urlencode($graph);
 		$format = '&format=' . urlencode('application/sparql-results+json');
 		$params = '&timeout=0';
 
-		$requestString =  $url . '&query=' . urlencode($sparqlQuery) . $format . $params;
+		$requestString =  $url . '?query=' . urlencode($sparqlQuery) . $format . $params;
 
 		// get the query results with curl, accept json only
 		$ch = curl_init();
@@ -32,7 +34,7 @@ class CurlHelper {
     $response = '';
 		$format = '';
 
-		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql?default-graph-uri=' . urlencode(DEFAULT_LGD_GRAPH);
+		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql?default-graph-uri=' . urlencode(RESOURCE_GRAPH);
 		$params = '&timeout=0';
 
 		switch ($shortFormat) {

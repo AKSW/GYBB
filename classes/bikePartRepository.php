@@ -1,4 +1,5 @@
 <?php
+require_once('classes/queryFactory.php');
 
 /*
  * To change this template, choose Tools | Templates
@@ -10,7 +11,6 @@
  *
  * @author ju
  */
-require_once 'classes/queryFactory.php';
 class BikePartRepository extends QueryFactory {
 
 	function __construct() {
@@ -25,7 +25,7 @@ class BikePartRepository extends QueryFactory {
 		if (!$this->existsBikePartType($this->ttl_uri(SparqlConstants::GYBBO , $bikePartType->class))) {
 			// build bike part ontology
 			//build class
-			$sBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
+			$sBuilder = new SparqlBuilder(ONTOLOGY_GRAPH);
 			$sBuilder->subject(SparqlConstants::GYBBO, $bikePartType->class);
 			$classPredicates  = array();
 			$classPredicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, SparqlConstants::OWL, SparqlConstants::OWL_CLASS);
@@ -35,7 +35,7 @@ class BikePartRepository extends QueryFactory {
 			$sBuilder->predicates($classPredicates);
 			$this->execSparql($sBuilder->toSparql());
 
-			$sBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
+			$sBuilder = new SparqlBuilder(ONTOLOGY_GRAPH);
 			$sBuilder->subject(SparqlConstants::GYBBO, $bikePartType->predicate);
 			$predicatePredicates = array();
 			$predicatePredicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, SparqlConstants::RDFS, SparqlConstants::RDFS_PROPERTY);
@@ -53,13 +53,14 @@ class BikePartRepository extends QueryFactory {
 	 * @param type $bikePart
 	 */
 	public function mergeBikePart($bikePart) {
+
 		$bikePartType = $bikePart->type;
 
 		if(!$this->existsBikePartWithType(
 				$this->ttl_uri(parent::GYBB, $bikePart->uri),
 				$this->ttl_uri(parent::GYBBO, $bikePartType->class))) {
 
-			$pBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
+			$pBuilder = new SparqlBuilder();
 			$pBuilder->subject(parent::GYBB, $bikePart->uri);
 			$predicates = array();
 			$predicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, parent::GYBBO, $bikePartType->class);

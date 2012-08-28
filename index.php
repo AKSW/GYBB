@@ -15,7 +15,6 @@ class FrontController {
 		'login'=> 'controller/login.php',
 		'facebook' => 'controller/facebook.php',
 		'logout' => 'controller/logout.php',
-		'marker' => 'controller/marker.php',
 		'reportDetails' => 'controller/reportDetails.php',
 		'reportsInArea' => 'controller/reportsInArea.php',
 		'suggestion' => 'controller/suggestion.php',
@@ -45,9 +44,10 @@ class FrontController {
 		$action = 'home';//default
 		if (array_key_exists('action', $_REQUEST)) {
 			$action = $_REQUEST['action'];
-
 		}
+
 		$actionMapping = $this->actionMapping;
+
 		if (array_key_exists ($action, $actionMapping)) {
 			require_once($this->actionMapping[$action]);
 			$className = strtoupper(substr($action, 0, 1)) . substr($action, 1) . 'Controller';
@@ -60,21 +60,13 @@ class FrontController {
 			$this->reportError();
 		}
 
-
 	}
 
 
 	private function reportError() {
 	}
 
-
-
 }
-
-
-
-ini_set("display_errors", "stdout");
-
 
 $main  = FrontController::getInstance();
 $main->execute();

@@ -5,26 +5,22 @@ require_once('classes/reportDetails.php');
 
 class ReportDetailsController {
 
-public function execute() {
+	public function execute() {
 
-	if (isset($_GET['reportID'])) {
+		if (isset($_GET['reportID'])) {
 
-		$reportDetails = new ReportDetails($_GET['reportID']);
-		$reportData = $reportDetails->getReportDetails();
+			$reportDetails = new ReportDetails($_GET['reportID']);
+			$reportData = $reportDetails->getReportDetails();
 
-		$hints = new Hints($_GET['reportID']);
-		$hintsData = $hints->getHints();
+			$hints = new Hints($_GET['reportID']);
+			$hintsData = $hints->getHints();
 
-		return new ReportDetailsView($reportData, $hintsData);
+			return new ReportDetailsView($reportData, $hintsData);
 
-	} else {
-
-		return new ErrorView();
+		} else {
+			return new ErrorView();
+		}
 	}
-
-
-}
-
 
 }
 

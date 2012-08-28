@@ -161,6 +161,20 @@ div.olMap.bikemap-add-hint {
 	background: #fff;;
 }
 
+/* table-sorters */
+th.tablesorter-header {
+	background: url(../img/sort.gif) no-repeat right center;
+	cursor: pointer;
+}
+
+th.tablesorter-headerSortDown {
+	background: url(../img/down.gif) no-repeat right center;
+}
+
+th.tablesorter-headerSortUp {
+	background: url(../img/up.gif) no-repeat right center;
+}
+
 
 /*=============== open layers style ===============*/
 

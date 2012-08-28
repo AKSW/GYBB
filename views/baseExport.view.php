@@ -1,13 +1,13 @@
 <?php
 
-	abstract class BaseExportView {
+abstract class BaseExportView {
 
-		public function show() {
-			$this->doShow();
-		}
-
-		abstract protected function doShow();
-
+	public function show() {
+		$this->doShow();
 	}
+
+	abstract protected function doShow();
+
+}
 
 ?>

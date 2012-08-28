@@ -4,7 +4,6 @@ require_once('views/json.view.php');
 require_once('views/error.view.php');
 
 
-
 class HintsController {
 
 	public function execute() {

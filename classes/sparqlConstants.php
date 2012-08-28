@@ -4,7 +4,7 @@ require_once('config/config.php');
 class SparqlConstants {
 
   public $allPrefixes = array(
-	  'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 		'contact' => 'http://www.w3.org/2000/10/swap/pim/contact#',
 		'dbo' => 'http://dbpedia.org/ontology/',
 		'owl' => 'http://www.w3.org/2002/07/owl#',
@@ -31,17 +31,17 @@ class SparqlConstants {
 
 	const DC = "dc";
 	const DCT = "dct";
-  const CREATOR = "creator";
-  const FOAF = 'foaf';
-  const MBOX = 'mbox';
+	const CREATOR = "creator";
+	const FOAF = 'foaf';
+	const MBOX = 'mbox';
 	const GEO = "geo";
 
 	const XSD = "xsd";
 	const XSD_DATE = "xsd:date";
 	const XSD_DATETIME = "xsd:dateTime";
 	const XSD_DOUBLE = "xsd:double";
-  const XSD_STRING = "xsd:string";
-  const XSD_INT = "xsd:integer";
+	const XSD_STRING = "xsd:string";
+	const XSD_INT = "xsd:integer";
 
 	const GYBBO = "gybbo";
 
@@ -52,9 +52,9 @@ class SparqlConstants {
 	const STATE_CLOSED = "closed";
 
 	const REPORT = "Report";
+	const BIKE = "Bike";
 	const BIKEFACT = "BikeFact";
 	const BIKEFACTREL = "BikeFactRelation";
-	const BIKETYPE = "bikeType";
 	const COLOR = "color";
 	const WHEELSIZE = "wheelSize";
 	const MANUFACTURER = "manufacturer";
@@ -68,8 +68,8 @@ class SparqlConstants {
 	const DESCRIBESTHEFTOF = "describesTheftOf";
 	const DEPICTION = "depiction";
 
-  const HINTWHAT = "hintWhat";
-  const HINTWHEN = "hintWhen";
+	const HINTWHAT = "hintWhat";
+	const HINTWHEN = "hintWhen";
 	const HINT = "Hint";
 	const HINTFOR = "hintFor";
 

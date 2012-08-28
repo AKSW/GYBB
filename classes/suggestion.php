@@ -7,7 +7,6 @@ require_once('classes/curlHelper.php');
  **/
 class Suggestion {
 
-
 	private $type;
 	private $term;
 	private $allowedTypes = array('manufacturer', 'color', 'bikeType', 'policeStation', 'comptype', 'compname');
@@ -29,7 +28,6 @@ class Suggestion {
 		} else  {
 			return '';
 		}
-
 	}
 
 
@@ -64,6 +62,18 @@ class Suggestion {
 					FILTER (regex(str(?name), "' . $this->term . '", "i")) .
 				} ORDER BY ?name';
 
+		} else if ($this->type === 'bikeType') {
+			// get all biketypes
+			$sparql .= '
+				SELECT DISTINCT ?type WHERE {
+					?biketype ' . $sc::RDFS . ':' . $sc::RDFS_LABEL . ' ?type . {
+						SELECT * WHERE {
+							?biketype ?p ' . $sc::GYBBO . ':' . $sc::BIKE . ' .
+						}
+					}
+					FILTER (regex(str(?type), "' . $this->term . '", "i")) .
+				} ORDER BY ?type';
+
 		} else  {
 			$sparql .= '
 				SELECT DISTINCT ?o WHERE { ?s ' . $sc::GYBBO . ':' . $this->type . ' ?o
@@ -74,7 +84,6 @@ class Suggestion {
 		return $sparql;
 
 	}
-
 
 
 }

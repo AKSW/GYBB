@@ -4,12 +4,16 @@
 define('DEBUG', true);
 
 // where your base belongs to us
-// NOTE if you change your baseurl you should change the DEFAULT_LGD_GRAPH value
-// and some prefixes in the classes/sparqlConstants.php too
+// NOTE if you change your baseurl you should change the RESOURCE_GRAPH and
+// other graph values and some prefixes in the classes/sparqlConstants.php too
 define('BASE_URL', 'http://getyourbikeback.webgefrickel.de/');
 
 // where all the RDF goes
-define('DEFAULT_LGD_GRAPH', 'http://getyourbikeback.webgefrickel.de/');
+define('RESOURCE_GRAPH', 'http://getyourbikeback.webgefrickel.de/resource/');
+define('ONTOLOGY_GRAPH', 'http://getyourbikeback.webgefrickel.de/ontology/');
+define('DATACUBE_GRAPH', 'http://getyourbikeback.webgefrickel.de/datacube/');
+define('VOID_GRAPH', 'http://getyourbikeback.webgefrickel.de/void/');
+
 define('BASE_ENDPOINT_URL', 'http://127.0.0.1');
 define('BASE_ENDPOINT_PORT', '8181');
 
@@ -33,6 +37,6 @@ define('MIME_TYPE', 'image/jpeg');
 define('UPLOAD_FOLDER', '/var/www/getyourbikeback/web/uploads/'); // absolute server path
 
 // security token for curl cronjobs, add the following parameter as token
-//to run the action=statistics command.
+// to run the action=statistics command.
 define('CRON_JOB_TOKEN', 'z2lIM45Yrs');
 ?>

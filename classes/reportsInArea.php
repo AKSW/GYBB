@@ -49,6 +49,11 @@ class ReportsInArea {
 			$finalResults[] = $singleTempArray;
 		}
 
+		// foreach bike, get the biketype
+		foreach ($finalResults as $key => $singleBike) {
+			$bike = new Bike($singleBike['bikeID']);
+			$finalResults[$key]['bikeType'] = $bike->getBikeType();
+		}
 		return $finalResults;
 	}
 
@@ -63,8 +68,7 @@ class ReportsInArea {
 							gybbo:noticedTheft ?noticedTheft ;
 							gybbo:describesTheftOf ?bikeID .
 
-		?bikeID gybbo:bikeType ?bikeType ;
-						gybbo:color ?color .
+		?bikeID gybbo:color ?color .
 
 		FILTER (?lon > ' . $this->left . ' && ?lon < ' . $this->right . ' &&
 						?lat > ' . $this->bottom . ' && ?lat < ' . $this->top . ')

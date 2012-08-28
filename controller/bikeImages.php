@@ -7,10 +7,6 @@ require_once('views/json.view.php');
  **/
 class BikeImagesController {
 
-	function __construct() {
-	}
-
-
 	public function execute()  {
 
 		if (isset($_GET['bikeID']) && !empty($_GET['bikeID']))  {
@@ -35,4 +31,3 @@ class BikeImagesController {
 }
 
 ?>
-

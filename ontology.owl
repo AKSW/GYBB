@@ -13,17 +13,13 @@
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix dcterms: <http://purl.org/dc/terms/>.
 
-
-#our prefixes
+# our prefixes
 @prefix gybb: <http://getyourbikeback.webgefrickel.de/resource/>.
 @prefix gybbo: <http://getyourbikeback.webgefrickel.de/ontology/>.
 
-
 <http://getyourbikeback.webgefrickel.de/ontology.owl> rdf:type owl:Ontology .
 
-
-
-#Taxonomy
+# Taxonomy
 gybbo:Report 
 	rdf:type owl:Class;
 	rdfs:subClassOf owl:Thing.
@@ -67,7 +63,8 @@ gybbo:placeOf
 gybbo:street
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Place.
-gybbo:housenumber
+
+gybbo:house_number
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Place.
 
@@ -86,16 +83,11 @@ gybbo:bikeFactRelation
 	rdfs:domain gybbo:Bike;
 	rdfs:range gybbo:BikeFact.
 
-gybbo:dateOfTheft
-	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Report;
-	rdfs:label "Date of the theft".
-
-gybbo:startDurationOfTheft	
+gybbo:lastSeen	
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report.
 
-gybbo:endDurationOfTheft	
+gybbo:noticedTheft	
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report.
 
@@ -105,10 +97,6 @@ gybbo:state
 	rdfs:range	xsd:string.
 
 
-
-gybbo:bikeType
-	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Bike.
 gybbo:color
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
@@ -140,31 +128,3 @@ gybbo:describesTheftOf
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report;
 	rdfs:range gybbo:Bike.
-
-#VOID Metadata
-# Statistic properties and the sparql endpoint are updated based
-# on cron jobs
-gybb:GetYourBikeBack a void:Dataset;
-	dcterms:title	"GetYourBikeBack";
-	foaf:homepage <http://getyourbikeback.webgefrickel.de>;
-	dcterms:creator gybb:Julian_Hesselbach;
-	dcterms:publisher gybb:Julian_Hesselbach;
-	dcterms:contributor gybb:University_Leipzig;
-	dcterms:description "RDF Store and Ontology of GetYourBikeBack - the semantic way to recover stolen bikes";
-
-	void:triples 0; 
-	void:entities 0;
-	void:classes	0;
-	void:properties 0;
-	void:distinctSubjects 0;
-	void:distinctObjects 0;
-	void:uriSpace "http://getyourbikeback.webgefrickel.de/resource";
-	void:sparqlEndpoint <http://getyourbikeback.webgefrickel.de>.
-
-gybb:Julian_Hesselbach
-	rdfs:label "Julian Hesselbach";
-	foaf:mbox <mailto:julianhesselbach@googlemail.com>.
-
-gybb:University_Leipzig
-	rdfs:label "Universität Leipzig";
-	foaf:homepage <http://www.uni-leipzig.de>.

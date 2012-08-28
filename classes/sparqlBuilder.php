@@ -1,6 +1,7 @@
 <?php
 require_once('classes/sparqlConstants.php');
 
+// TODO three functions 2 classes in one file. :-(
 
 class PredicateBuilder extends SparqlConstants {
 
@@ -53,7 +54,6 @@ function typedLiteral($prefix, $value, $literal, $type) {
 /**
  * Builder für TTL Syntax
  *
-
  */
 class SparqlBuilder extends SparqlConstants {
 
@@ -64,12 +64,13 @@ class SparqlBuilder extends SparqlConstants {
 	private $suffix;
 
 
-	// Erstellt den SparqlBuilder $prefix und $suffix sind
-	// fuer die eigentlichen Funktionen
-	function __construct($prefix, $suffix) {
+	// Create a new sparqlBuilder, the graph value is where
+	// the data will be written -- default is RESOURCE_GRAPH
+	function __construct($graph = RESOURCE_GRAPH) {
 		parent::__construct();
-		$this->prefix = $prefix;
-		$this->suffix = $suffix;
+
+		$this->prefix =  "INSERT INTO <" . $graph . "> {\n";
+		$this->suffix = "  } \n";
 		$this->ttl = "";
 		$this->header = $this->fullPrefixList;
 	}
@@ -100,9 +101,9 @@ class SparqlBuilder extends SparqlConstants {
 
 	function toSparql() {
 		return (string) $this->header . "\n"
-						. $this->prefix . "\n"
-						. $this->ttl . "\n"
-						. $this->suffix;
+			. $this->prefix . "\n"
+			. $this->ttl . "\n"
+			. $this->suffix;
 	}
 
 }

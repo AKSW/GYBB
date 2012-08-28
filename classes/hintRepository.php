@@ -10,8 +10,7 @@ class HintRepository extends QueryFactory {
 	}
 
 	public function saveHint($hint) {
-		// Triplify Report
-		$sparqlBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
+		$sparqlBuilder = new SparqlBuilder();
 		$builder = $this->triplifyHintData($hint, $sparqlBuilder);
 		$this->execSparql($builder->toSparql());
 	}
@@ -19,35 +18,35 @@ class HintRepository extends QueryFactory {
 
 	private function triplifyHintData($hint, $to) {
 
-		$to->subject(SparqlBuilder::GYBB, $hint->getUniqueID());
+		$to->subject(SparqlConstants::GYBB, $hint->getUniqueID());
 
 		$predicates = array();
-		$predicates[] = predicateUri(SparqlBuilder::RDF, SparqlBuilder::RDF_TYPE, SparqlBuilder::GYBBO, SparqlBuilder::HINT);
-		$predicates[] = typedLiteral(SparqlBuilder::DCT, SparqlBuilder::CREATED, $hint->created, SparqlBuilder::XSD_DATETIME);
+		$predicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, SparqlConstants::GYBBO, SparqlConstants::HINT);
+		$predicates[] = typedLiteral(SparqlConstants::DCT, SparqlConstants::CREATED, $hint->created, SparqlConstants::XSD_DATETIME);
 
 		if (!empty($hint->hintWhen) && preg_match('/\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}Z/', $hint->hintWhen)) {
-			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::HINTWHEN, $hint->hintWhen, SparqlBuilder::XSD_DATETIME);
+			$predicates[] = typedLiteral(SparqlConstants::GYBBO, SparqlConstants::HINTWHEN, $hint->hintWhen, SparqlConstants::XSD_DATETIME);
 		}
 
     // user email and name
 		if (User::getCurrentUser()) {
-			$predicates[] = typedLiteral(SparqlBuilder::DC, SparqlBuilder::CREATOR, User::getCurrentUser()->name, SparqlBuilder::XSD_STRING);
-			$predicates[] = typedLiteral(SparqlBuilder::FOAF, SparqlBuilder::MBOX, User::getCurrentUser()->email, SparqlBuilder::XSD_STRING);
+			$predicates[] = typedLiteral(SparqlConstants::DC, SparqlConstants::CREATOR, User::getCurrentUser()->name, SparqlConstants::XSD_STRING);
+			$predicates[] = typedLiteral(SparqlConstants::FOAF, SparqlConstants::MBOX, User::getCurrentUser()->email, SparqlConstants::XSD_STRING);
 		} else {
-			$predicates[] = typedLiteral(SparqlBuilder::DC, SparqlBuilder::CREATOR, 'anonymous', SparqlBuilder::XSD_STRING);
+			$predicates[] = typedLiteral(SparqlConstants::DC, SparqlConstants::CREATOR, 'anonymous', SparqlConstants::XSD_STRING);
 		}
 
 		// address data
 		if (!empty($hint->lon) && !empty($hint->lat)) {
-			$predicates[] = typedLiteral(SparqlBuilder::GEO, SparqlBuilder::LAT, $hint->lat, SparqlBuilder::XSD_DOUBLE);
-			$predicates[] = typedLiteral(SparqlBuilder::GEO, SparqlBuilder::LON, $hint->lon, SparqlBuilder::XSD_DOUBLE);
+			$predicates[] = typedLiteral(SparqlConstants::GEO, SparqlConstants::LAT, $hint->lat, SparqlConstants::XSD_DOUBLE);
+			$predicates[] = typedLiteral(SparqlConstants::GEO, SparqlConstants::LON, $hint->lon, SparqlConstants::XSD_DOUBLE);
 		}
 
 		// hintWhat
-		if (!empty($hint->hintWhat)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::HINTWHAT, $hint->hintWhat);
+		if (!empty($hint->hintWhat)) $predicates[] = predicateLiteral(SparqlConstants::GYBBO, SparqlConstants::HINTWHAT, $hint->hintWhat);
 
 		//relation zu report:
-		$predicates[] = predicateUri(SparqlBuilder::GYBBO, SparqlBuilder::HINTFOR, SparqlBuilder::GYBB, $hint->getUniqueReportID());
+		$predicates[] = predicateUri(SparqlConstants::GYBBO, SparqlConstants::HINTFOR, SparqlConstants::GYBB, $hint->getUniqueReportID());
 
 		$to->predicates($predicates);
 

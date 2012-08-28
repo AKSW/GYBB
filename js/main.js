@@ -11,21 +11,26 @@ $(document).ready(function() {
 			// set some options for the map depending on type
 			if (mapType === 'exploration') {
 				options = { zoom: 13 }
+
 			} else if (mapType === 'report') {
 				options = { zoom: 15 }
+
 			} else if (mapType === 'report-details') {
 				lon = $(this).data('bikemaplon');
 				lat = $(this).data('bikemaplat');
 				options = { zoom: 15, startLon: lon, startLat: lat };
+
 			} else if (mapType === 'add-hint') {
 				lon = $(this).data('bikemaplon');
 				lat = $(this).data('bikemaplat');
 				options = { zoom: 15, startLon: lon, startLat: lat };
+
 			} else if (mapType === 'hints') {
 				lon = $(this).data('bikemaplon');
 				lat = $(this).data('bikemaplat');
 				reportID = $(this).data('bikemapreportid');
 				options = { zoom: 14, startLon: lon, startLat: lat, report: reportID };
+
 			} else if (mapType === 'searchresults') {
 				options = { zoom: 13 }
 			}
@@ -50,8 +55,10 @@ $(document).ready(function() {
 		});
 	}
 
+	$('.table-sortable').tablesorter();
 
-  // load images for recently stolen bikes
+
+	// load images for recently stolen bikes
 	if ($('.stolen-bike').length)  {
 		$('.stolen-bike').on('mouseenter', function(e)  {
 			$(this).find('.stolen-image').removeClass('hidden');

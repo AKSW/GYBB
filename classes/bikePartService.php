@@ -1,4 +1,6 @@
 <?php
+require_once('classes/bikePart.php');
+require_once('classes/bikePartRepository.php');
 
 /**
  * Service zur Erstellung von BikeParts und BikePartTypes.
@@ -11,7 +13,6 @@ class BikePartService {
 	private $repository;
 
 	function __construct() {
-		require_once 'classes/bikePartRepository.php';
 		$this->repository = new BikePartRepository();
 	}
 
@@ -22,8 +23,6 @@ class BikePartService {
 	 * @return array mit BikeParts
 	 */
 	function mergeBikeParts($data) {
-		require_once 'classes/bikePart.php';
-
 
 		$bikeParts = array();
 
@@ -41,6 +40,7 @@ class BikePartService {
 				$bikeParts[] = $bikePart;
 			}
 		}
+
 		foreach($bikeParts as $part) {
 			$this->repository->mergeBikePart($part);
 		}
@@ -49,6 +49,5 @@ class BikePartService {
 	}
 
 }
+
 ?>
-
-

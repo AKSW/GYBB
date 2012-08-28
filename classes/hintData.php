@@ -19,7 +19,7 @@ class HintData {
 		* Initializes a new Report Data.
 		*/
 	function initialize() {
-    if (User::getCurrentUser()) {
+		if (User::getCurrentUser()) {
 			$this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
 			$this->user = User::getCurrentUser();
 		} else {

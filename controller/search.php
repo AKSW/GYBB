@@ -77,7 +77,6 @@ class SearchController {
 	}
 
 
-
 	private function buildQuery($search) {
 		$sc = new SparqlConstants();
 		$query = $sc->fullPrefixList;
@@ -123,7 +122,6 @@ class SearchController {
 		}
 	}
 }
-
 
 
 ?>

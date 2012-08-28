@@ -2,6 +2,7 @@
 require_once('classes/sparqlConstants.php');
 require_once('classes/curlHelper.php');
 require_once('classes/utils.php');
+require_once('classes/bike.php');
 
 /**
  *
@@ -14,7 +15,14 @@ class RecentlyStolen {
 		$query = $this->buildSparqlQuery($limit);
 		$allReports = $curl->getSparqlResults($query);
 
-		return cleanupSparqlResults($allReports);
+		$recently = cleanupSparqlResults($allReports);
+
+		// foreach bike, get the biketype
+		foreach ($recently as $key => $singleBike) {
+			$bike = new Bike($singleBike['bikeID']);
+			$recently[$key]['bikeType'] = $bike->getBikeType();
+		}
+		return $recently;
 	}
 
 
@@ -27,8 +35,8 @@ class RecentlyStolen {
 									dct:created ?date ;
 									gybbo:city ?city ;
 									gybbo:describesTheftOf ?bikeID .
-				?bikeID gybbo:bikeType ?bikeType ;
-								gybbo:color ?color
+				?bikeID gybbo:color ?color .
+
 			} ORDER BY DESC(?date) LIMIT ' . (int) $limit;
 
 		return $query;

@@ -9,22 +9,22 @@ class HintSuccessView extends BaseView {
 		$this->reportID = $id;
 	}
 
-	protected function doShow() {
-		?>
-		<div class="fluid-row">
+	protected function doShow() { ?>
 
-			<h2>Yay! Your Hint has been saved.</h2>
-			<p>
-				You, sir or madam, are a good person.
-			</p>
-			<p>
-				<a href="index.php?action=home">Return to the Homepage</a> |
-				<a href="index.php?action=reportDetails&amp;reportID=<?php echo $this->reportID; ?>">Back to the report</a>
-			</p>
+<div class="fluid-row">
 
-		</div>
+	<h2>Yay! Your Hint has been saved.</h2>
+	<p>
+		You, sir or madam, are a good person.
+	</p>
+	<p>
+		<a href="index.php?action=home">Return to the Homepage</a> |
+		<a href="index.php?action=reportDetails&amp;reportID=<?php echo $this->reportID; ?>&amp;showHints=true">Back to the report</a>
+	</p>
 
-		<?php
+</div>
+
+	<?php
 	}
 }
 

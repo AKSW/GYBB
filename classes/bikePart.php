@@ -22,6 +22,7 @@ class BikePart {
 }
 
 /** OWL Klasse der Art des Bikeparts */
+// TODO 2 classes in one file is not nice
 class BikePartType {
 
 	// RDFS label

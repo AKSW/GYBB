@@ -7,7 +7,6 @@ class QueryFactory extends SparqlConstants {
 	/* Default Graph URI */
 
 	private $connection;
-	private $graphURI;
 
 	function __construct() {
 		parent::__construct();
@@ -19,24 +18,10 @@ class QueryFactory extends SparqlConstants {
 			throw new RepositoryException($this->getLastError());
 		}
 		@odbc_autocommit($this->connection, true);
-
-		$this->graphURI = DEFAULT_LGD_GRAPH;
-	}
-	
-	function graphUri() {
-		return $this->graphURI;
 	}
 
 	function __destruct() {
 		$this->_closeConnection();
-	}
-
-	function insertPrefix() {
-		return "INSERT INTO <" . $this->graphURI . "> {\n";
-	}
-
-	function insertSuffix() {
-		return "  } \n";
 	}
 
 	function asUniqueIdentifier($iri, $sequence) {
@@ -68,9 +53,9 @@ class QueryFactory extends SparqlConstants {
 		return $resultId;
 	}
 
-	public function ttl($ttl) {
+	public function ttl($ttl, $graph = ONTOLOGY_GRAPH) {
 		$ttl = addcslashes($ttl, '\'\\');
-		$virtuosoPl = 'CALL DB.DBA.TTLP( \'' . $ttl . '\',\'\',\'' . $this->graphURI . '\',0)';
+		$virtuosoPl = 'CALL DB.DBA.TTLP( \'' . $ttl . '\',\'\',\'' . $graph . '\',0)';
 		$resultId = odbc_exec($this->connection, $virtuosoPl);
 
 		if (false === $resultId) {
@@ -79,9 +64,9 @@ class QueryFactory extends SparqlConstants {
 		}
 
 		return $resultId;
-		
+
 	}
-	
+
 	/**
 	* Returns the last ODBC error message and number.
 	*

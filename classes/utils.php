@@ -40,7 +40,6 @@ function inputHelper($id, $wrap = '', $placeholder = '', $required = false, $typ
 	}
 
 	echo $output;
-
 }
 
 
@@ -93,7 +92,6 @@ function cleanupSparqlResults($results)  {
 	}
 
 	return $finalResults;
-
 }
 
 
@@ -119,9 +117,7 @@ function exportListLink($name, $format) {
 	$link .= '">' . $name . '</a></li>';
 
 	echo $link;
-
 }
-
 
 
 ?>
