@@ -17,25 +17,26 @@ class Validator {
 
 
 	private function validate($post) {
-
-		foreach($post as $name => $value) {
-			// the post data can be an array for images and components
-			// images will be handled by the ImageHandler-Class
-			if (is_array($value)) {
-				$tempArray = array();
-				foreach ($value as $key => $subValue) {
-					$tempArray[$key] = $this->cleanUp($subValue);
+		if (is_array($post)) {
+			foreach($post as $name => $value) {
+				// the post data can be an array for images and components
+				// images will be handled by the ImageHandler-Class
+				if (is_array($value)) {
+					$tempArray = array();
+					foreach ($value as $key => $subValue) {
+						$tempArray[$key] = $this->cleanUp($subValue);
+					}
+					$this->cleanPostData[$name] = $tempArray;
+				} else {
+					$this->cleanPostData[$name] = $this->cleanUp($value);
 				}
-				$this->cleanPostData[$name] = $tempArray;
-			} else {
-				$this->cleanPostData[$name] = $this->cleanUp($value);
 			}
 		}
 	}
 
 
 	// removes everything but the wanted chars and returns a clean string
-	private function cleanUp($string) {
+	public function cleanUp($string) {
 		$string = preg_replace('/[^A-Za-zäöüßÄÜÖé\-_0-9:\s\.,@!\?]/i', '', $string);
 		return trim($string);
 	}

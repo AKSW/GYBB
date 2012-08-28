@@ -10,7 +10,7 @@ class Suggestion {
 
 	private $type;
 	private $term;
-	private $allowedTypes = array('manufacturer', 'color', 'bikeType', 'reportedTo', 'comptype', 'compname');
+	private $allowedTypes = array('manufacturer', 'color', 'bikeType', 'policeStation', 'comptype', 'compname');
 
 
 	function __construct($type, $term)  {

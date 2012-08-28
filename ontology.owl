@@ -10,9 +10,12 @@
 @prefix dbo: <http://dbpedia.org/ontology/>.
 @prefix dbpedia: <http://dbpedia.org/>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
 
 #our prefixes
-@prefix gybb: <http://getyourbikeback.webgefrickel.de#>.
+@prefix gybb: <http://getyourbikeback.webgefrickel.de/resource/>.
 @prefix gybbo: <http://getyourbikeback.webgefrickel.de/ontology/>.
 
 
@@ -96,6 +99,13 @@ gybbo:endDurationOfTheft
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report.
 
+gybbo:state
+	rdf:type owl:ObjectProperty;
+	rdfs:domain	gybbo:Report;
+	rdfs:range	xsd:string.
+
+
+
 gybbo:bikeType
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
@@ -130,3 +140,31 @@ gybbo:describesTheftOf
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report;
 	rdfs:range gybbo:Bike.
+
+#VOID Metadata
+# Statistic properties and the sparql endpoint are updated based
+# on cron jobs
+gybb:GetYourBikeBack a void:Dataset;
+	dcterms:title	"GetYourBikeBack";
+	foaf:homepage <http://getyourbikeback.webgefrickel.de>;
+	dcterms:creator gybb:Julian_Hesselbach;
+	dcterms:publisher gybb:Julian_Hesselbach;
+	dcterms:contributor gybb:University_Leipzig;
+	dcterms:description "RDF Store and Ontology of GetYourBikeBack - the semantic way to recover stolen bikes";
+
+	void:triples 0; 
+	void:entities 0;
+	void:classes	0;
+	void:properties 0;
+	void:distinctSubjects 0;
+	void:distinctObjects 0;
+	void:uriSpace "http://getyourbikeback.webgefrickel.de/resource";
+	void:sparqlEndpoint <http://getyourbikeback.webgefrickel.de>.
+
+gybb:Julian_Hesselbach
+	rdfs:label "Julian Hesselbach";
+	foaf:mbox <mailto:julianhesselbach@googlemail.com>.
+
+gybb:University_Leipzig
+	rdfs:label "Universität Leipzig";
+	foaf:homepage <http://www.uni-leipzig.de>.

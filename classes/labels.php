@@ -21,10 +21,12 @@ class Labels {
 		'manufacturer' => 'Manufacturer',
 		'wheelSize' => 'Wheelsize in inch',
 		'frameNumber' => 'Framenumber',
-		'registrationCode' => 'Police registered number (if any)',
+		'registrationCode' => 'Police registered number',
 		'policeStation' => 'Police station in charge',
 		'circumstances' => 'How it happened',
-		'findersFee' => 'Finders fee'
+		'findersFee' => 'Finders fee',
+		'hintWhen' => 'When did you see something?',
+		'hintWhat' => 'What did you see?',
 	);
 
 

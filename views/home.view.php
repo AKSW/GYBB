@@ -5,10 +5,11 @@ require_once('config/config.php');
 	class HomeView extends BaseView {
 
 		private $recentlyStolen;
+		private $hints;
 
-		function __construct($recentlyStolen)  {
+		function __construct($recentlyStolen, $hints)  {
+			$this->hints = $hints;
 			$this->recentlyStolen = $recentlyStolen;
-
 		}
 
 		protected function doShow() { ?>
@@ -48,12 +49,20 @@ require_once('config/config.php');
 
 						<article class="newest-hints box">
 							<h2>Newest Hints</h2>
-							<ul>
-								<li> <a href="#">Hinthint</a> </li>
-								<li> <a href="#">Hinthint</a> </li>
-								<li> <a href="#">Hinthint</a> </li>
-								<li> <a href="#">Hinthint</a> </li>
-							</ul>
+							<ol>
+							<?php
+								if (is_array($this->hints) && !empty($this->hints))  {
+									foreach ($this->hints as $hint) { ?>
+										<li id="<?php echo $hint['hintID']; ?>">
+											<a href="<?php echo BASE_URL ?>index.php?action=reportDetails&reportID=<?php echo $hint['reportID']; ?>">
+											<?php echo readableDateTime($hint['hintWhen']) . '<br /> ' . $hint['hintWhat']; ?>
+											</a>
+										</li>
+									<?php
+									}
+								}
+								?>
+							</ol>
 						</article>
 					</section>
 

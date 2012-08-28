@@ -3,24 +3,21 @@
 class User {
 
 	public $id;
-
 	public $name;
+	public $email;
 
-	public	$email;
-
-	public $oauthProvider;
-
-	public $oauthId;
+	public $oauthProvider = 'facebook';
+	public $oauthId = '';
 
 
 	function __construct($values) {
+
 		if (!is_null($values) && !empty($values)) {
-		$this->id = $values['id'];
-		$this->email = $values['email'];
-		$this->oauthId = $values['oauth_uid'];
-		$this->oauthProvider = $values['oauth_provider'];
-		$this->name = $values['username'];
+			$this->id = $values['id'];
+			$this->email = $values['email'];
+			$this->name = $values['name'];
 		}
+
 	}
 
 	function getHash() {

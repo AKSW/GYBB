@@ -32,4 +32,7 @@ define('MAX_UPLOAD_SIZE', 1024 * 1024); // 1 MB
 define('MIME_TYPE', 'image/jpeg');
 define('UPLOAD_FOLDER', '/var/www/getyourbikeback/web/uploads/'); // absolute server path
 
+// security token for curl cronjobs, add the following parameter as token
+//to run the action=statistics command.
+define('CRON_JOB_TOKEN', 'z2lIM45Yrs');
 ?>

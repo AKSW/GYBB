@@ -12,8 +12,10 @@ public function execute() {
 		$reportDetails = new ReportDetails($_GET['reportID']);
 		$reportData = $reportDetails->getReportDetails();
 
+		$hints = new Hints($_GET['reportID']);
+		$hintsData = $hints->getHints();
 
-		return new ReportDetailsView($reportData);
+		return new ReportDetailsView($reportData, $hintsData);
 
 	} else {
 

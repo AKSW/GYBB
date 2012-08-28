@@ -1,13 +1,11 @@
 <?php
 require_once('views/report.view.php');
-require_once('views/reportsuccess.view.php');
-require_once('views/home.view.php');
+require_once('views/reportSuccess.view.php');
 require_once('classes/reportData.php');
 require_once('classes/reportRepository.php');
+require_once('classes/reportService.php');
 require_once('classes/user.php');
 require_once('classes/validator.php');
-require_once('classes/dao/reportDataDao.php');
-require_once('classes/reportService.php');
 require_once('classes/fileChecker.php');
 
 class ReportController {

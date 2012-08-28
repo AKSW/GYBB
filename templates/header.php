@@ -2,6 +2,11 @@
 require_once('config/config.php');
 require_once('classes/user.php');
 require_once('templates/headerBase.php');
+require_once('classes/utils.php');
+
+$reportID = false;
+if (isset($_POST['reportID'])) $reportID = $_POST['reportID'];
+if (isset($_GET['reportID'])) $reportID = $_GET['reportID'];
 ?>
 
 <body>
@@ -21,38 +26,32 @@ require_once('templates/headerBase.php');
 						<li class="nav-header">
 							choose format
 						</li>
-						<li>
-							<a href="#">RDF</a>
-						</li>
-						<li>
-							<a href="#">Turtle</a>
-						</li>
-						<li>
-							<a href="#">RDF/XML</a>
-						</li>
-						<li>
-							<a href="#">RDF</a>
-						</li>
+						<?php
+							exportListLink('RDF/XML', 'rdf');
+							exportListLink('RDF/JSON', 'json');
+							exportListLink('N3/Turtle', 'ttl');
+							exportListLink('N-Triples', 'txt');
+						?>
 						<li class="divider">
 						</li>
 						<li class="nav-header">
 							Admin
 						</li>
 						<li>
-							<a href="#">Save Graph</a>
+							<a href="/setupGraph.php">Clear Graph</a>
 						</li>
 						<li>
-							<a href="#">Clear Graph</a>
+							<a href="/index.php?action=deleteReport&amp;reportID=<?php echo $reportID; ?>">Delete this report</a>
 						</li>
 					</ul>
 					</li>
-				</ul>
 
 					<?php } ?>
 
 				</ul>
-				<form action="index.php?action=search" class="navbar-search pull-left">
-					<input type="text" class="search-query" placeholder="Search" />
+				<form action="index.php" method="get" class="navbar-search pull-left">
+					<input type="hidden" name="action" value="search" />
+					<input type="text" name="search" class="search-query" placeholder="Search" />
 				</form>
 
 				<ul class="nav pull-right">

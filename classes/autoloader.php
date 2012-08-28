@@ -7,8 +7,6 @@ function __autoload($class) {
 	$filename = strtolower(substr($class,0,1)).substr($class, 1) . ".php";
 	if (is_file('classes/'.$filename)) {
 		include_once 'classes/'.$filename;
-	} else if (is_file('classes/dao/'.$filename)) {
-		include_once 'classes/dao/'.$filename;
 	}
 
 }

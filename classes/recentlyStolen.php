@@ -8,16 +8,17 @@ require_once('classes/utils.php');
  **/
 class RecentlyStolen {
 
-	public function getRecentlyStolenReports() {
+	public function getRecentlyStolenReports($limit) {
 		$curl = new CurlHelper();
 
-		$query = $this->buildSparqlQuery();
+		$query = $this->buildSparqlQuery($limit);
 		$allReports = $curl->getSparqlResults($query);
+
 		return cleanupSparqlResults($allReports);
 	}
 
 
-	function buildSparqlQuery() {
+	function buildSparqlQuery($limit) {
 		$sc = new SparqlConstants();
 
 		$query = $sc->fullPrefixList . '
@@ -28,8 +29,7 @@ class RecentlyStolen {
 									gybbo:describesTheftOf ?bikeID .
 				?bikeID gybbo:bikeType ?bikeType ;
 								gybbo:color ?color
-			} ORDER BY ?date LIMIT 5
-		';
+			} ORDER BY DESC(?date) LIMIT ' . (int) $limit;
 
 		return $query;
 	}

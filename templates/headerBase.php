@@ -9,6 +9,7 @@
 if (DEBUG === true) {
 ?>
 		<link rel="stylesheet" href="3rdparty/twitterBootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="3rdparty/twitterBootstrap/css/bootstrap-responsive.min.css" />
 		<link rel="stylesheet" href="3rdparty/jquery-ui/css/smoothness/jquery-ui-1.8.20.custom.css" />
 		<link rel="stylesheet" href="3rdparty/openlayers/openlayers.css" />
 		<link rel="stylesheet" href="css/style.css" />
@@ -18,6 +19,7 @@ if (DEBUG === true) {
 		<script src="js/debugging.js"></script>
 		<script src="js/jquery-1.7.2.js"></script>
 		<script src="js/jquery.colorbox-min.js"></script>
+		<script src="js/jquery.throttle-debounce.min.js"></script>
 		<script src="3rdparty/twitterBootstrap/js/bootstrap.min.js"></script>
 		<script src="3rdparty/jquery-ui/js/jquery-ui-1.8.20.custom.min.js"></script>
 		<script src="3rdparty/jquery-ui/js/jquery-ui.timepicker.js"></script>

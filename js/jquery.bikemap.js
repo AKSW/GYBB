@@ -63,6 +63,7 @@
 		this.features = false;
 		this.startLonLat = {};
 		this.singleMarker = false;
+		this.singleHintMarker = false;
 		this.suggested = [];
 
 		// default elements and options
@@ -85,16 +86,21 @@
 			this.options.mapType = this.$mapElement.data('bikemaptype');
 			this.options.mapOptions = $.extend(this.options.mapOptions, this.options);
 			this.createMap();
-			this.addMapFeatures();
 		},
 
 
 		createMap: function() {
-			log('map create');
+			// to successfully create a map, the container has to be visible
+			var $parent = this.$mapElement.parent();
+			this.$mapElement.appendTo($('body'));
+
 			this.map = new OpenLayers.Map(this.mapElement,this.options.mapOptions);
 			this.map.addLayer(new OpenLayers.Layer.OSM());
 			this.zoomMapToCenter(this.options.startLon, this.options.startLat);
 			this.newMarkersLayer();
+			this.addMapFeatures();
+
+			this.$mapElement.appendTo($parent);
 		},
 
 
@@ -103,7 +109,7 @@
 
 				case 'exploration':
 					// initially get all reports by doing a zoom/move event
-					this.registerExplorationEvents();
+					this.registerDefaultEvents();
 					this._eventMapMoveZoomEnd(null);
 					break;
 
@@ -114,7 +120,21 @@
 
 				case 'report-details':
 					this.drawSingleMarker(this.options.startLon, this.options.startLat);
-					this.registerReportDetailsEvents();
+					this.registerDefaultEvents();
+					break;
+
+				case 'add-hint':
+					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.registerAddHintEvents();
+					break;
+
+        case 'hints':
+					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this._eventMapMoveZoomEnd(null);
+					break;
+
+				case 'searchresults':
+					this.drawSearchMarkers(searchResults);
 					break;
 
 				default:
@@ -159,7 +179,17 @@
 
 		drawMarkers: function(markers, color) {
 			var that = this;
-			that.newMarkersLayer();
+			var image;
+
+			if (color === 'red') {
+				image = 'marker.png';
+			} else if (color === 'blue') {
+				image = 'marker-blue.png';
+			}
+
+			var size = new OpenLayers.Size(21, 25);
+			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+
 			that.newFeatures();
 
 			// draw each marker on the map
@@ -182,18 +212,13 @@
 					'autoSize': true
 				});
 
-				// set the html for the marker from type/color etc.
-				html = '<h2>' + this.bikeType + '</h2><p>Color: ' + this.color;
-				html += '<br />Noticed Theft: ' + this.noticedTheft;
-				// TODO images are not in the returned data-array yet
-				// html += '<img src="/3rdparty/timthumb/timthumb.php?src=' + this.image + '&w=150" alt="" />';
-				html += '<a href="index.php?action=reportDetails&reportID=' + this.reportID + '">Show Reportdetails</a>';
-
-				feature.data.popupContentHTML = html;
+				feature.data.popupContentHTML = this.html;
 				feature.data.overflow = "auto";
+				feature.data.icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
 
 				// create a marker from that feature, add click events and add it to the map
 				marker = feature.createMarker();
+
 				// we need a reference to this feature AND this plugin
 				combined = {
 					that: that,
@@ -214,6 +239,25 @@
 		},
 
 
+		drawSearchMarkers: function(searchResults) {
+			var markers = [];
+			var newMarker;
+			$.each(searchResults, function(key, value) {
+				newMarker = {
+					lon: this.lon,
+					lat: this.lat,
+					html: '<h3>' + this.bikeType + '</h3><p>'
+							+ '<strong>City:</strong> ' + this.city + '<br />'
+							+ '<strong>Color:</strong> ' + this.color + '<br />'
+							+ '<a href="index.php?action=reportDetails&amp;reportID=' + key + '">Show Reportdetails</a>'
+				};
+				markers.push(newMarker);
+			});
+
+			this.drawMarkers(markers, 'red');
+		},
+
+
 		drawSingleMarker: function(lon, lat) {
 			if (this.singleMarker) {
 				this.singleMarker.destroy();
@@ -224,6 +268,24 @@
 				)
 			);
 			this.markersLayer.addMarker(this.singleMarker);
+		},
+
+
+		drawSingleHintMarker: function(lon, lat) {
+			// the single hint marker is blue - use that icon
+			var size = new OpenLayers.Size(21, 25);
+			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+			var icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/marker-blue.png', size, offset);
+
+			if (this.singleHintMarker) {
+				this.singleHintMarker.destroy();
+			}
+			this.singleHintMarker = new OpenLayers.Marker(
+				new OpenLayers.LonLat(lon, lat).transform(
+					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
+				), icon
+			);
+			this.markersLayer.addMarker(this.singleHintMarker);
 		},
 
 
@@ -250,7 +312,6 @@
 
 			that.map.addControl(geo);
 			geo.events.register("locationupdated", geo, function(e) {
-				that.drawSingleMarker(e.position.coords.longitude, e.position.coords.latitude);
 				that.zoomMapToCenter(e.position.coords.longitude, e.position.coords.latitude);
 				that._reverseLonLatLookup(e.position.coords.longitude, e.position.coords.latitude);
 			});
@@ -264,16 +325,9 @@
 		},
 
 
-		registerExplorationEvents: function() {
+		registerDefaultEvents: function() {
 			this.map.events.register('moveend', this, this._eventMapMoveZoomEnd);
 			this.map.events.register('zomeend', this, this._eventMapMoveZoomEnd);
-		},
-
-		registerReportDetailsEvents: function() {
-			this.map.events.register('moveend', this, this._eventMapMoveZoomEnd);
-			this.map.events.register('zomeend', this, this._eventMapMoveZoomEnd);
-
-
 		},
 
 
@@ -281,13 +335,23 @@
 			var that = this;
 			var address = this.$road.add(this.$postcode).add(this.$city);
 
-			address.on('keyup', function(e) {
-				// TODO wait 1-2 seconds before firing evt.
+			address.on('keyup', $.debounce(500, function(e) {
 				e.preventDefault();
-				that._lonLatLookup();
-			});
+				// only do the lookup if there are more than 2-3 chars
+				var roadLength = that.$road.val().length;
+				var postcodeLength = that.$postcode.val().length;
+				var cityLength = that.$city.val().length;
+				if (roadLength > 3 || postcodeLength > 2 || cityLength > 3) {
+					that._lonLatLookup();
+				}
+			}));
 
 			this.map.events.register('click', this, this._eventMapClick);
+		},
+
+
+		registerAddHintEvents: function() {
+			this.map.events.register('click', this, this._eventAddHintMapClick);
 		},
 
 
@@ -301,23 +365,56 @@
 				'top': top,
 				'bottom': bottom
 			}, function(response) {
-				that.drawMarkers(response, 'red');
-			});
+				var markers = [];
+				var marker;
 
+				$.each(response, function() {
+					marker = {
+						lon: this.lon,
+						lat: this.lat,
+						// set the html for the marker from type/color etc.
+						// TODO images are not in the returned data-array yet
+						// html += '<img src="/3rdparty/timthumb/timthumb.php?src=' + this.image + '&w=150" alt="" />';
+						html: '<h3>' + this.bikeType + '</h3><p>'
+								+ '<strong>Color:</strong> ' + this.color + '<br />'
+								+ '<strong>Noticed Theft:</strong> ' + this.noticedTheft + '<br />'
+								+ '<a href="index.php?action=reportDetails&reportID='
+								+ this.reportID + '">Show Reportdetails</a>'
+					}
+					markers.push(marker);
+				});
+				that.drawMarkers(markers, 'red');
+			});
 		},
 
 
-		getHintsInArea: function(left, right, top, bottom) {
+		getHints: function(report) {
 			var that = this;
 
 			$.getJSON($.baseURL + 'index.php', {
-				'action': 'hintsInArea',
-				'left': left,
-				'right': right,
-				'top': top,
-				'bottom': bottom
+				'action': 'hints',
+				'reportID': report
 			}, function(response) {
-				that.drawMarkers(response, 'blue');
+				var markers = [];
+				var marker;
+
+				$.each(response, function() {
+					marker = {
+						lon: this.lon,
+						lat: this.lat,
+						html: '<h3>Hint by ' + this.hintUser + '</h3><p>'
+								+ '<strong>Time of observation:</strong> ' + this.hintWhen + '<br />'
+								+ '<strong>Hint given on:</strong> ' + this.created + '<br />'
+								+ this.hintWhat + '</p>'
+					}
+					markers.push(marker);
+				});
+				that.drawMarkers(markers, 'blue');
+				// now switch back to the first tab. boooo.
+				$('#report-details-view').find('.nav-tabs li').removeClass('active');
+				$('#report-details-view').find('.nav-tabs li').first().addClass('active');
+				$('#report-details-view').find('.tab-pane').removeClass('active');
+				$('#report-details-view').find('.tab-pane').first().addClass('active');
 			});
 
 		},
@@ -340,14 +437,35 @@
 
 		_eventMapMoveZoomEnd: function(evt) {
 			var bounds = this.map.getExtent().transform(this.map.projection, this.map.displayProjection);
-			if (this.options.mapType === 'report') {
-				this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
-			} else if (this.options.mapType === 'report-details') {
-				this.getHintsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+
+			switch(this.options.mapType) {
+				case 'report':
+					this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+					break;
+
+				case 'exploration':
+					this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+					break;
+
+				case 'hints':
+					this.getHints(this.options.report);
+					break;
+
+				default:
+					break;
 			}
+
 		},
 
 
+		_eventAddHintMapClick: function(evt) {
+			var lonLat = this.map.getLonLatFromViewPortPx(evt.xy);
+			lonLat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			this.drawSingleHintMarker(lonLat.lon, lonLat.lat);
+
+			this.$lon.val(lonLat.lon);
+			this.$lat.val(lonLat.lat);
+		},
 
 
 		_eventMapClick: function(evt) {
@@ -367,15 +485,12 @@
 		_reverseLonLatLookup: function(lon, lat) {
 			var that = this;
 			$.getJSON(
-				'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
-				function(data) {
-					that.$road.val(data.address.road);
-					that.$house_number.val(data.address.house_number);
-					that.$postcode.val(data.address.postcode);
-					that.$city.val(data.address.city);
+				'http://nominatim.openstreetmap.org/reverse?format=json&lat='
+				+ lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
+				function(place) {
+					that._setAddressValues(place);
 				}
 			);
-
 		},
 
 
@@ -383,8 +498,7 @@
 			var that = this;
 			var htmlout = '<h2>Did you mean...</h2>';
 
-			// TODO hardcoded GERMANY... /de/ - remove this?
-			var url = 'http://nominatim.openstreetmap.org/search/de/' + that.$postcode.val() + ' ' +
+			var url = 'http://nominatim.openstreetmap.org/search/' + that.$postcode.val() + ' ' +
 					that.$city.val() + '/' + that.$road.val() + '/' + that.$house_number.val() +
 					'?format=json&polygon=1&addressdetails=1&osm_type=N';
 			url = encodeURI(url);
@@ -401,29 +515,24 @@
 					e.preventDefault();
 					var placeID = $(this).attr('href').replace('place_id#', '');
 					var place = that.suggested[placeID];
-
-					// TODO refactor! see _reverseLonLatLookup
-					that.$road.val(place.address.road);
-					that.$house_number.val(place.address.house_number);
-					that.$postcode.val(place.address.postcode);
-					that.$city.val(place.address.city);
-					that.$lon.val(place.lon);
-					that.$lat.val(place.lat);
-
+					that._setAddressValues(place);
 					// set the marker on the map
 					that.drawSingleMarker(place.lon, place.lat);
-
 					// set map to center around new marker
 					that.zoomMapToCenter(place.lon, place.lat);
-
 				});
 			});
 		},
 
 
-		_privateFuntion: function() {
+		_setAddressValues: function(place) {
+			this.$road.val(place.address.road);
+			this.$house_number.val(place.address.house_number);
+			this.$postcode.val(place.address.postcode);
+			this.$city.val(place.address.city);
+			this.$lon.val(place.lon);
+			this.$lat.val(place.lat);
 		}
-
 
 
 	}); // end Plugin.prototype extend

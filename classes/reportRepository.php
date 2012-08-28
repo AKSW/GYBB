@@ -106,7 +106,11 @@ class ReportRepository extends QueryFactory {
 		if (!empty($reportData->postcode)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::POSTCODE, $reportData->postcode);
 		if (!empty($reportData->circumstances)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::CIRCUMSTANCES, $reportData->circumstances);
 		if (!empty($reportData->findersFee)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::FINDERSFEE, $reportData->findersFee);
-
+	
+		//state active or not active
+		$predicates[] = typedLiteral(parent::GYBBO, parent::STATE, parent::STATE_OPEN, parent::XSD_STRING);
+		
+		
 		//relation zu Bike IRI:
 		$predicates[] = predicateUri(SparqlBuilder::GYBBO, SparqlBuilder::DESCRIBESTHEFTOF, SparqlBuilder::GYBB, $reportData->getUniqueBikeID());
 

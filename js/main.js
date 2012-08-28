@@ -4,6 +4,7 @@ $(document).ready(function() {
 	if ($('.bikemap').length) {
 		var $bikemaps = $('.bikemap');
 		$bikemaps.each(function() {
+			var lon, lat, reportID;
 			var options = {};
 			var mapType = $(this).data('bikemaptype');
 
@@ -13,10 +14,20 @@ $(document).ready(function() {
 			} else if (mapType === 'report') {
 				options = { zoom: 15 }
 			} else if (mapType === 'report-details') {
-				var lon = $(this).data('bikemaplon');
-				var lat = $(this).data('bikemaplat');
-				log(lon, lat);
-        options = { zoom: 15, startLon: lon, startLat: lat }
+				lon = $(this).data('bikemaplon');
+				lat = $(this).data('bikemaplat');
+				options = { zoom: 15, startLon: lon, startLat: lat };
+			} else if (mapType === 'add-hint') {
+				lon = $(this).data('bikemaplon');
+				lat = $(this).data('bikemaplat');
+				options = { zoom: 15, startLon: lon, startLat: lat };
+			} else if (mapType === 'hints') {
+				lon = $(this).data('bikemaplon');
+				lat = $(this).data('bikemaplat');
+				reportID = $(this).data('bikemapreportid');
+				options = { zoom: 14, startLon: lon, startLat: lat, report: reportID };
+			} else if (mapType === 'searchresults') {
+				options = { zoom: 13 }
 			}
 
 			$(this).bikemap(options);
@@ -50,17 +61,47 @@ $(document).ready(function() {
 		});
 	}
 
+	if ($('#hint-form').length) {
+		$('#hint-form').hide();
+
+		$('.btn-hint').on('click', function(e) {
+			e.preventDefault();
+			$.colorbox({
+				inline: true,
+				href: '#hint-form',
+				width: 850,
+				height: 580,
+				onComplete: function() {
+					$('#colorbox #hint-form').show();
+				},
+				onClosed: function() {
+					$('#hint-form').hide();
+				}
+			});
+
+		});
+
+	}
+
+
+	// tab navigation in report form
+	$('#nav-report a').on('click', function(e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+
 
 	// REPORT form stuff
 	//================================================================================
 
 	// timepicker for the start/end fields in the report-form
-	$('#lastSeen, #noticedTheft').datetimepicker({
+	$('#lastSeen, #noticedTheft, #hintWhen').datetimepicker({
 		firstDay: 1, // i dont like mondaaaaaaaays
 		showAnim: 'fade',
 		maxDate: '0d',
 		dateFormat: "dd.mm.yy",
-		timeFormat: "hh:ss"
+		timeFormat: "hh:mm",
+		stepMinute: 5
 	});
 
 	// autocompletion for some fields
@@ -77,11 +118,6 @@ $(document).ready(function() {
 		});
 	}
 
-	// tab navigation in report form
-	$('#nav-report a').on('click', function(e) {
-		e.preventDefault();
-		$(this).tab('show');
-	});
 
 	// image upload duplication
 	$('.btn-add-more-images').on('click', function(e) {

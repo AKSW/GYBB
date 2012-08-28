@@ -1,0 +1,3 @@
+RewriteEngine on 
+RewriteBase /sparql/ 
+RewriteRule ^(.*)$ http://bikebike.dev:8890/sparql/$1 [P]

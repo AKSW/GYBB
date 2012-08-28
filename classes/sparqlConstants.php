@@ -21,7 +21,9 @@ class SparqlConstants {
 		'gybb' => 'http://getyourbikeback.webgefrickel.de/resource/',
 		'gybbo' => 'http://getyourbikeback.webgefrickel.de/ontology/',
 		'geo' => 'http://www.w3.org/2003/01/geo/wgs84_pos#',
-		'virtrdf' => 'http://www.openlinksw.com/schemas/virtrdf#'
+		'virtrdf' => 'http://www.openlinksw.com/schemas/virtrdf#',
+		'void' => 'http://rdfs.org/ns/void#',
+		'qb' => 'http://purl.org/linked-data/cube#'
 	);
 
 
@@ -42,6 +44,13 @@ class SparqlConstants {
   const XSD_INT = "xsd:integer";
 
 	const GYBBO = "gybbo";
+
+	const STATE	= "state";
+
+	const STATE_OPEN = "open";
+	const STATE_FOUND = "found";
+	const STATE_CLOSED = "closed";
+
 	const REPORT = "Report";
 	const BIKEFACT = "BikeFact";
 	const BIKEFACTREL = "BikeFactRelation";
@@ -58,6 +67,11 @@ class SparqlConstants {
 	const FINDERSFEE = "findersFee";
 	const DESCRIBESTHEFTOF = "describesTheftOf";
 	const DEPICTION = "depiction";
+
+  const HINTWHAT = "hintWhat";
+  const HINTWHEN = "hintWhen";
+	const HINT = "Hint";
+	const HINTFOR = "hintFor";
 
 	const CREATED = "created";
 	const LASTSEEN = "lastSeen";

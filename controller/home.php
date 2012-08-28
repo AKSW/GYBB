@@ -2,13 +2,13 @@
 require_once('views/home.view.php');
 require_once('classes/recentlyStolen.php');
 require_once('classes/bikeImages.php');
+require_once('classes/hints.php');
 
 class HomeController {
 
-
 	public function execute() {
 		$recently = new RecentlyStolen();
-		$stolen = $recently->getRecentlyStolenReports();
+		$stolen = $recently->getRecentlyStolenReports(3);
 
 		foreach ($stolen as $key => $bike) {
 			$bi = new BikeImages($bike['bikeID'], 1);
@@ -18,7 +18,10 @@ class HomeController {
 			}
 		}
 
-		$view = new HomeView($stolen);
+		$hints = new Hints(false, 3);
+		$hintList = $hints->getHints();
+
+		$view = new HomeView($stolen, $hintList);
 		return $view;
 
 	}

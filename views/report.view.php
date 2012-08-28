@@ -54,7 +54,9 @@ class ReportView extends BaseView {
 						</ul>
 
 						<div class="span8">
-							<div class="bikemap bikemap-report" data-bikemaptype="report"></div>
+							<div class="map-wrapper">
+								<div class="bikemap bikemap-report" data-bikemaptype="report"></div>
+							</div>
 							<button class="btn btn-findme">Center on my location</button>
 						</div>
 

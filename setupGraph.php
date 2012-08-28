@@ -7,13 +7,13 @@ require_once('templates/headerBase.php');
 <html>
 <body>
 <h2>Setup Graph </h2>
-<?php 
+<?php
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
 //GET
 ?>
 
-<p> If you click OK below, the graph will be deleted and setup. 
+<p> If you click OK below, the graph will be deleted and setup.
 	This operation will destroy all submitted reports.</p>
 
 <form method="POST">
@@ -22,17 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 </form>
 
 <p><strong>Remember:</strong> with great power comes great responsibility!</p>
-<?php 
+<?php
 
 } else {
 //POST:
-	
+
 
 ?>
 
 	<p>Performing operations...</p>
 	<ol>
-	
+
 <?php
 
 	ini_set("display_errors", "stdout");
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 		<li>Saved ontology..</li>
 		<li>Setup done!</li>
 	</ol>
-<?php 
+<?php
 	}
 ?>
 

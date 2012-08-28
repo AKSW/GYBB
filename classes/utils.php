@@ -106,5 +106,22 @@ function readableDateTime($dateTime)  {
 }
 
 
+function exportListLink($name, $format) {
+	$link = '<li><a href="index.php?action=export&amp;format=' . $format;
+
+	$id = false;
+	if (isset($_POST['reportID'])) $id = $_POST['reportID'];
+	if (isset($_GET['reportID'])) $id = $_GET['reportID'];
+
+	if ($id !== false) {
+		$link .= '&amp;reportID=' . $id;
+	}
+	$link .= '">' . $name . '</a></li>';
+
+	echo $link;
+
+}
+
+
 
 ?>

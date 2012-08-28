@@ -13,11 +13,11 @@ class ReportsInAreaController {
 			$ria = new ReportsInArea($_GET['left'], $_GET['right'], $_GET['top'], $_GET['bottom']);
 			$allReports = $ria->getReportsInArea();
 
-		  return new JsonView($allReports);
+			return new JsonView($allReports);
 
 		} else {
 
-      return new ErrorView();
+			return new ErrorView();
 		}
 	}
 
