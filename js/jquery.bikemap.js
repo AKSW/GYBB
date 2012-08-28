@@ -46,13 +46,13 @@
 	// The actual plugin constructor
 	function Plugin(mapElement, options) {
 		// define some globally used domelements here
-		this.$inputRoad = $('#road');
-		this.$inputHousenumber = $('#housenumber');
-		this.$inputPostcode = $('#postcode');
-		this.$inputCity = $('#city');
+		this.$road = $('#road');
+		this.$house_number = $('#house_number');
+		this.$postcode = $('#postcode');
+		this.$city = $('#city');
+		this.$lon = $('#lon');
+		this.$lat = $('#lat');
 		this.$suggestions = $('#suggestions');
-		this.$inputLon = $('#lon');
-		this.$inputLat = $('#lat');
 
 		// this will be filled up later
 		this.map = {};
@@ -65,7 +65,7 @@
 		// default elements and options
 		this.mapElement = mapElement;
 		this.$mapElement = $(mapElement);
-		this.options = $.extend({}, defaults, options) ;
+		this.options = $.extend({}, defaults, options);
 		this._defaults = defaults;
 		this._name = pluginName;
 		this.init();
@@ -80,6 +80,7 @@
 		init: function () {
 			// get the current maptype from the element and store it for later use
 			this.options.mapType = this.$mapElement.data('bikemaptype');
+			this.options.mapOptions.zoom = this.$mapElement.data('bikemapzoom');
 
 			this.createMap();
 			this.addMapFeatures();
@@ -231,7 +232,7 @@
 
 		registerReportEvents: function() {
 			var that = this;
-			var address = this.$inputRoad.add(this.$inputPostcode).add(this.$inputCity);
+			var address = this.$road.add(this.$postcode).add(this.$city);
 
 			address.on('keyup', function(e) {
 				// TODO wait 1-2 seconds before firing evt.
@@ -272,8 +273,8 @@
 			this.drawSingleMarker(lonLat.lon, lonLat.lat);
 
 
-			this.$inputLon.val(lonLat.lon);
-			this.$inputLat.val(lonLat.lat);
+			this.$lon.val(lonLat.lon);
+			this.$lat.val(lonLat.lat);
 			this._reverseLonLatLookup(lonLat.lon, lonLat.lat);
 		},
 
@@ -291,10 +292,10 @@
 			$.getJSON(
 				'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
 				function(data) {
-					that.$inputRoad.val(data.address.road);
-					that.$inputHousenumber.val(data.address.house_number);
-					that.$inputPostcode.val(data.address.postcode);
-					that.$inputCity.val(data.address.city);
+					that.$road.val(data.address.road);
+					that.$house_number.val(data.address.house_number);
+					that.$postcode.val(data.address.postcode);
+					that.$city.val(data.address.city);
 				}
 			);
 
@@ -303,15 +304,12 @@
 
 		_lonLatLookup: function() {
 			var that = this;
-			var city = this.$inputCity.val();
-			var road = this.$inputRoad.val();
-			var postcode = this.$inputPostcode.val();
-			var housenumber = this.$inputHousenumber.val();
 			var htmlout = '<h2>Did you mean...</h2>';
 
 			// TODO hardcoded GERMANY... /de/ - remove this?
-			var url = 'http://nominatim.openstreetmap.org/search/de/' + postcode + ' '
-							+ city + '/' + road + '/' + housenumber + '?format=json&polygon=1&addressdetails=1&osm_type=N';
+			var url = 'http://nominatim.openstreetmap.org/search/de/' + that.$postcode.val() + ' '
+							+ that.$city.val() + '/' + that.$road.val() + '/' + that.$house_number.val()
+							+ '?format=json&polygon=1&addressdetails=1&osm_type=N';
 			url = encodeURI(url);
 			$.getJSON(url, function(data) {
 				that.suggested = [];
@@ -328,12 +326,12 @@
           var place = that.suggested[placeID];
 
 					// TODO refactor! see _reverseLonLatLookup
-					that.$inputRoad.val(place.address.road);
-					that.$inputHousenumber.val(place.address.house_number);
-					that.$inputPostcode.val(place.address.postcode);
-					that.$inputCity.val(place.address.city);
-					that.$inputLon.val(place.lon);
-					that.$inputLat.val(place.lat);
+					that.$road.val(place.address.road);
+					that.$house_number.val(place.address.house_number);
+					that.$postcode.val(place.address.postcode);
+					that.$city.val(place.address.city);
+					that.$lon.val(place.lon);
+					that.$lat.val(place.lat);
 
 					// set the marker on the map
 					that.drawSingleMarker(place.lon, place.lat);

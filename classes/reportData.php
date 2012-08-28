@@ -5,53 +5,53 @@ require_once('classes/bikePartService.php');
 class ReportData {
 
 	public $road;
-	public $housenumber;
-	public $datacode;
+	public $house_number;
+	public $postcode;
 	public $city;
 	public $lon;
 	public $lat;
 
-	public $dateoftheft;
-	public $timestart;
-	public $timeend;
-	public $codednumber;
-	public $police;
-	// public $policeIRI; ???
+	public $dateOfTheft;
+	public $lastSeen;
+	public $noticedTheft;
+	public $registrationNumber;
+	public $policeStation;
 
-	public $biketype;
+	public $bikeType;
 	public $color;
-	public $description;
+	public $comment;
 	public $price;
 	public $manufacturer;
-	public $size;
-	public $framenumber;
+	public $wheelSize;
+	public $frameNumber;
 
 	public $images;
 	public $components;
 
 	private $id;
-	public $creationDate;
+	public $created;
 	public $user;
 
 
-        /**
-         * Initializes a new Report Data. 
-         */
-        function initialize() {
-            $this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
-            $this->creationDate = date_format(date_create(), 'Y-m-d');
-            $this->user = User::getCurrentUser();
+	/**
+		* Initializes a new Report Data.
+		*/
+	function initialize() {
+		$this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
+		$this->creationDate = date_format(date_create(), 'Y-m-d');
+		$this->user = User::getCurrentUser();
 
-        }
-        
-
-	function getUniqueID() {
-		return 'report'.$this->id;
 	}
 
+
+	function getUniqueID() {
+		return 'report' . $this->id;
+	}
+
+
 	function getUniqueBikeID() {
-              return 'bike'.$this->id;
-        }
+		return 'bike' . $this->id;
+	}
 
 
 }

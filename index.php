@@ -35,8 +35,8 @@ class FrontController {
 		'facebook' => 'controller/facebook.php',
 		'logout' => 'controller/logout.php',
 		'marker' => 'controller/marker.php',
-		'reportdetail' => 'controller/reportdetail.php'
-		
+		'reportDetails' => 'controller/reportDetails.php'
+
 );
 
 

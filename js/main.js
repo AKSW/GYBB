@@ -18,8 +18,8 @@ $(document).ready(function() {
 
 	// datepicker for dateoftheft field
 	// TODO pre-formatting date here (y-m-d) would be better?!
-	if ($('#dateoftheft').length) {
-		$('#dateoftheft').datepicker({
+	if ($('#dateOfTheft').length) {
+		$('#dateOfTheft').datepicker({
 			firstDay: 1, // i dont like mondaaaaaaaays
 			showAnim: 'fade',
 			dateFormat: "dd.mm.yy",
@@ -27,11 +27,11 @@ $(document).ready(function() {
 	}
 
 	// timepicker for the start/end fields in the report-form
-	$('#timeend, #timestart').timepicker({});
+	$('#lastSeen, #noticedTheft').timepicker({});
 
 	// autocompletion for biketypes
 	// TODO get this data from the rdf-store
-	if ($('#biketype').length) {
+	if ($('#bikeType').length) {
 		var availableTags = [
 			"Mountainbike",
 			"Rennrad",
@@ -40,7 +40,7 @@ $(document).ready(function() {
 			"Citybomber"
 		];
 
-		$('#biketype').autocomplete({
+		$('#bikeType').autocomplete({
 			source: availableTags
 		});
 	}

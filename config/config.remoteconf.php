@@ -6,6 +6,11 @@ define('DEBUG', true);
 // where your base belongs to us
 define('BASE_URL', 'http://getyourbikeback.webgefrickel.de/');
 
+// where all the RDF goes
+define('DEFAULT_LGD_GRAPH', 'http://getyourbikeback.webgefrickel.de/');
+define('BASE_ENDPOINT_URL', 'http://127.0.0.1');
+define('BASE_ENDPOINT_PORT', '8181');
+
 // facebook config
 define('APP_ID', '388573504514465');
 define('APP_SECRET', '66c2db5c7e004fac135cd1a6057dff86');

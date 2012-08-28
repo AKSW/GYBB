@@ -86,7 +86,7 @@ gybbo:bikeFactRelation
 gybbo:dateOfTheft
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report;
-	rdfs:label "Dieb Datum".
+	rdfs:label "Date of the theft".
 
 gybbo:startDurationOfTheft	
 	rdf:type owl:ObjectProperty;

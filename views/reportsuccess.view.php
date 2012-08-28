@@ -20,7 +20,7 @@
 
 			<p>
 				<a href="index.php?action=home">Return to the Homepage</a> |
-				<a href="index.php?action=reportdetail&amp;reportID=<?php echo $this->reportID; ?>">Show your report</a>
+				<a href="index.php?action=reportDetails&amp;reportID=<?php echo $this->reportID; ?>">Show your report</a>
 			</p>
 
 		</div>

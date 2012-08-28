@@ -13,7 +13,7 @@ require_once "views/base.view.php";
         <h2>Welcome!</h2>
 
         <section id="welcome">
-          <div class="bikemap bikemap-home" data-bikemaptype="exploration"></div>
+          <div class="bikemap bikemap-home" data-bikemaptype="exploration" data-bikemapzoom="12"></div>
 
           <section class="sidebar sidebar-main">
             <article class="recently-stolen box">

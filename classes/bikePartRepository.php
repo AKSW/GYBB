@@ -13,10 +13,14 @@
 require_once 'classes/queryFactory.php';
 class BikePartRepository extends QueryFactory {
 
+	function __construct() {
+		parent::__construct();
+	}
+
 	protected function toIriExpression($pre, $uri) {
 		return $pre . ":" . $uri;
 	}
-	
+
 	// Holt den BikePartType aus dem Repository legt ihn ggf. an.
 	public function mergeBikePartType($bikePartType) {
 		// 1. pruefe ob es den typ schon gibt, wenn ja gib den bikepartype zurueck
@@ -46,18 +50,18 @@ class BikePartRepository extends QueryFactory {
 		}
 
 	}
-	
+
 	/**
-	 * Speichert die BikeParts 
-	 * @param type $bikePart 
+	 * Speichert die BikeParts
+	 * @param type $bikePart
 	 */
 	public function mergeBikePart($bikePart) {
 		$bikePartType = $bikePart->type;
-		
+
 		if(!$this->existsBikePartWithType(
 				$this->toIriExpression(parent::GYBB, $bikePart->uri),
 				$this->toIriExpression(parent::GYBBO, $bikePartType->class))) {
-			
+
 			$pBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
 			$pBuilder->subject(parent::GYBB, $bikePart->uri);
 			$predicates = array();
@@ -68,23 +72,23 @@ class BikePartRepository extends QueryFactory {
 			$this->execSparql($pBuilder->toSparql());
 
 		}
-		
+
 	}
 
 
 	private function existsBikePartType($typeUri) {
-		$query = SparqlConstants::PREFIXES;
+		$query = $this->fullPrefixList;
 		$query .="
 SELECT COUNT DISTINCT ?s WHERE {
 ?s rdf:type owl:ObjectProperty .
 FILTER( ?s = " . $typeUri . ")
 }";
 	 return $this->exists($query);
-		
+
 	}
 
 	private function existsBikePartWithType($partUri, $typeUri) {
-		$query = parent::PREFIXES;
+		$query = $this->fullPrefixList;
 		$query .="
 SELECT COUNT DISTINCT ?s, ?o WHERE {
 ?s rdf:type ?o .
@@ -92,8 +96,8 @@ FILTER( ?s = " . $partUri .  " && ?o = ". $typeUri . ")
 }";
 		return $this->exists($query);
 	}
-	
-	
+
+
 
 	protected function exists($countQuery) {
 		$result = $this->execSparql($countQuery);
@@ -107,7 +111,7 @@ FILTER( ?s = " . $partUri .  " && ?o = ". $typeUri . ")
 		//print_r($value);
 		return is_int($value[0]) && $value[0] > 0;
 	}
-	
+
 
 }
 

@@ -38,26 +38,26 @@ require_once "views/base.view.php";
 
 			<div class="tab-pane active" id="location">
 				<fieldset class="well">
-					<legend>Angaben zum Ort</legend>
+					<legend>Place of theft</legend>
 					<p>
-						Textdummy -- click on map
+						Set Marker per Click on the map or insert address an choose from suggestions
 					</p>
 					<div class="row-fluid">
 						<ul class="span4">
 							<li>
-								<label for="road">Straße</label>
+								<label for="road">road</label>
 								<input type="text" id="road" name="road" />
 							</li>
 							<li>
-								<label for="housenumber">Hausnummer</label>
-								<input type="text" id="housenumber" name="housenumber" />
+								<label for="housenumber">housenumber</label>
+								<input type="text" id="house_number" name="house_number" />
 							</li>
 							<li>
-								<label for="postcode">Postleitzahl</label>
+								<label for="postcode">zip code</label>
 								<input type="text" id="postcode"	name="postcode" />
 							</li>
 							<li>
-								<label for="city">Ort</label>
+								<label for="city">city</label>
 								<input type="text" id="city" name="city" />
 							</li>
 							<li>
@@ -71,7 +71,7 @@ require_once "views/base.view.php";
 						</ul>
 
 						<div class="span8">
-							<div class="bikemap bikemap-report" data-bikemaptype="report"></div>
+							<div class="bikemap bikemap-report" data-bikemaptype="report" data-bikemapzoom="16"></div>
 							<button class="btn btn-findme">Center on my location</button>
 						</div>
 
@@ -86,19 +86,22 @@ require_once "views/base.view.php";
 
 			<div class="tab-pane" id="date-and-time">
 				<fieldset>
-					<legend>Angaben zum Tatzeitraum</legend>
+					<legend>Date and time of theft</legend>
+					<p>
+						Input date in format: DD.MM.YYYY and time in format: HH:MM or use widgets
+					</p>
 					<ul>
 						<li>
-							<label for="dateoftheft">Date of Theft</label>
-							<input type="text" id="dateoftheft" name="dateoftheft" required="required" />
+							<label for="dateOfTheft">Date of Theft</label>
+							<input type="text" id="dateOfTheft" name="dateOfTheft" required="required" />
 						</li>
 						<li>
-							<label for="timestart">Time from</label>
-							<input type="text" name="timestart" value="" id="timestart" />
+							<label for="lastSeen">Time from</label>
+							<input type="text" name="lastSeen" value="" id="lastSeen" />
 						</li>
 						<li>
-							<label for="timeend">Time to</label>
-							<input type="text" name="timeend" value="" id="timeend" />
+							<label for="noticedTheft">Time to</label>
+							<input type="text" name="noticedTheft" value="" id="noticedTheft" />
 						</li>
 					</ul>
 				</fieldset>
@@ -107,43 +110,44 @@ require_once "views/base.view.php";
 			<div class="tab-pane" id="your-bike">
 
 				<fieldset class="well">
-					<legend>Angaben zum Fahrrad</legend>
+					<legend>Details of the bike</legend>
 					<div class="row-fluid">
 						<ul class="span4">
 							<li>
-								<label for="biketype">Fahrradart</label>
-								<input type="text" id="biketype" name="biketype" required="required" />
+								<label for="biketype">biketype</label>
+								<input type="text" id="bikeType" name="bikeType" required="required" />
 							</li>
 							<li>
-								<label for="color">Farbe</label>
+								<label for="color">color</label>
 								<input type="text" id="color" name="color" required="required" />
 							</li>
 							<li>
-								<label for="description">Beschreibung</label>
-								<textarea rows="5" col="50" id="description" name="description"> </textarea>
+								<label for="comment">description</label>
+								<textarea rows="5" col="50" id="comment" name="comment"> </textarea>
 							</li>
 							<li>
-								<label for="price">Kaufpreis</label>
+								<label for="price">price in €</label>
 								<input type="text" id="price" name="price"/>
 							</li>
 							<li>
-								<label for="manufacturer">Hersteller</label>
+								<label for="manufacturer">manufacturer</label>
 								<input type="text" id="manufacturer" name="manufacturer"/>
 							</li>
 							<li>
-								<label for="size">Laufradgroesse in Zoll</label>
-								<input type="text" id="size" name="size"/>
+								<label for="wheelSize">wheel size in inch</label>
+								<input type="text" id="wheelSize" name="wheelSize"/>
 							</li>
 							<li>
-								<label for="framenumber">Rahmennummer</label>
-								<input type="text" id="framenumber" name="framenumber"/>
+								<label for="frameNumber">framenumber</label>
+								<input type="text" id="frameNumber" name="frameNumber"/>
 							</li>
 						</ul>
 
 						<div class="span8">
 							<h3>Additional bike parts</h3>
 							<p>
-								Text Komponenten
+								enter type of component in the first field and the name of the component in the second<br />
+								for example Type: switch gear Name:XT
 							</p>
 
 							<ul class="form-inline">
@@ -176,15 +180,15 @@ require_once "views/base.view.php";
 
 			<div class="tab-pane" id="police-information">
 				<fieldset>
-					<legend>Polizeiliche Informationen</legend>
+					<legend>Police related informations</legend>
 					<ul>
 						<li>
-						<label for="codednumber">Nummer Fahrradcodierung</label>
-						<input type="text" id="codednumber" name="codednumber"/>
+						<label for="registrationCode">police registered number</label>
+						<input type="text" id="registrationCode" name="registrationCode" />
 					</li>
 					<li>
-						<label for="police">zuständiges Polizeirevier</label>
-						<input type="text" id="police" name="police"/>
+						<label for="police">police station in charge</label>
+						<input type="text" id="policeStation" name="policeStation" />
 					</li>
 					</ul>
 				</fieldset>
@@ -201,7 +205,7 @@ require_once "views/base.view.php";
 						</tr>
 						<tr>
 							<td>House number</td>
-							<td id="summary-housenumber"></td>
+							<td id="summary-house_number"></td>
 						</tr>
 						<tr>
 							<td>Postal Code</td>
@@ -224,30 +228,30 @@ require_once "views/base.view.php";
 					<table class="span4 table table-condensed">
 						<tr>
 							<td>Date of theft</td>
-							<td id="summary-dateoftheft"></td>
+							<td id="summary-dateOfTheft"></td>
 						</tr>
 						<tr>
 							<td>Time from</td>
-							<td id="summary-timestart"></td>
+							<td id="summary-lastSeen"></td>
 						</tr>
 						<tr>
 							<td>Time to</td>
-							<td id="summary-timeend"></td>
+							<td id="summary-noticedTheft"></td>
 						</tr>
 						<tr>
 						  <td>Coded Number</td>
-						  <td id="summary-codednumber"></td>
+						  <td id="summary-registrationCode"></td>
 						</tr>
 						<tr>
 						  <td>Police Station</td>
-						  <td id="summary-police"></td>
+						  <td id="summary-policeStation"></td>
 						</tr>
 					</table>
 
 					<table class="span4 table table-condensed">
 						<tr>
 							<td>Your biketype</td>
-							<td id="summary-biketype"></td>
+							<td id="summary-bikeType"></td>
 						</tr>
 						<tr>
 							<td>Color</td>
@@ -255,7 +259,7 @@ require_once "views/base.view.php";
 						</tr>
 						<tr>
 							<td>Description</td>
-							<td id="summary-description"></td>
+							<td id="summary-comment"></td>
 						</tr>
 						<tr>
 							<td>Price in €</td>
@@ -267,11 +271,11 @@ require_once "views/base.view.php";
 						</tr>
 						<tr>
 							<td>Wheel size in inch</td>
-							<td id="summary-size"></td>
+							<td id="summary-wheelSize"></td>
 						</tr>
 						<tr>
 							<td>Framenumber</td>
-							<td id="summary-framenumber"></td>
+							<td id="summary-frameNumber"></td>
 						</tr>
 					</table>
 				</div>
