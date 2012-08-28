@@ -1,0 +1,99 @@
+
+form ul {
+  margin: 0;
+}
+
+form li {
+  list-style: none;
+
+}
+
+/*=============== layout ===============*/
+
+#facets {
+  float: left;
+  position: relative;
+  width: 50px;
+  color: #235678;
+}
+
+#debug {
+  float: left;
+}
+
+#header {
+  height: 120px;
+  padding-top: 20px;
+}
+
+#welcome {
+  position: relative;
+}
+
+#btn-start {
+  position: absolute; bottom: 20px; left: 80px;
+  z-index: 1100;
+}
+
+
+.sidebar {
+  position: absolute;
+  z-index: 1100;
+}
+
+.sidebar-main {
+  top: 40px;
+  left: 80px;
+}
+
+.sidebar-second {
+  top: 40px;
+  right: 40px;
+}
+
+.box {
+  width: 200px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+
+
+
+/*=============== layout classes ===============*/
+
+.bikemap {
+  background-color: #eee;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+.bikemap-report {
+  height: 400px;
+}
+
+.bikemap-home {
+  width: 100%;
+  height: 400px;
+}
+
+.logo {
+  display: block;
+  background-image: url(../img/logo.png);
+  width: 145px; height: 93px;
+}
+
+.btn-facebook {
+  display: block;
+  background-image: url(../img/fbConnect.png);
+  width: 154px; height: 22px;
+}
+
+/*=============== layout helpers ===============*/
+
+.ir {
+  color: transparent;
+  font: 0/0 a;
+  background-repeat: no-repeat;
+}
