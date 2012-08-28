@@ -98,7 +98,7 @@ class SearchController {
 
 		// now we have all search-fields and values -- let's
 		// cycle through all results and filter them
-		foreach ($data as $result) {
+		foreach ($data as $resultID => $result) {
 			$allInThere = array();
 			foreach ($searchFields as $field) {
 				// it's a nice result if the field is there and equal to the checkboxs value
@@ -111,7 +111,7 @@ class SearchController {
 
 			// if every filter-var is true, we have a result
 			if (!in_array(false, $allInThere)) {
-				$filteredData[] = $result;
+				$filteredData[$resultID] = $result;
 			}
 		}
 

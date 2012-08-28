@@ -31,6 +31,7 @@ class HintService {
 		$hint->lat = (float) $data['lat'];
 		$hint->hintWhen = $this->buildDateTime($data['hintWhen']);
 		$hint->hintWhat = $data['hintWhat'];
+		$hint->reportID = $data['reportID'];
 	}
 
 

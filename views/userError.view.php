@@ -1,6 +1,6 @@
 <?php
 
-class ErrorView {
+class UserErrorView {
 
 	public $exception = false;
 
@@ -11,11 +11,10 @@ class ErrorView {
 	}
 
 	protected function doShow() {
-		echo '<h2>An error occured. Please contact the admin.</h2>';
+		echo '<h2>You are not logged in. Please login via Facebook.</h2>';
 
 		if ($this->exception && DEBUG) {
 			echo "<pre>" . $this->exception->getMessage() . "</pre>";
-
 		}
 	}
 

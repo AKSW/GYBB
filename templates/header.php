@@ -47,6 +47,9 @@ if (isset($_GET['reportID'])) $reportID = $_GET['reportID'];
 					</li>
 
 					<?php } ?>
+					<li>
+						<a href="/index.php?action=help">Help</a>
+					</li>
 
 				</ul>
 				<form action="index.php" method="get" class="navbar-search pull-left">

@@ -24,6 +24,9 @@ class ReportController {
 
 			$cleanData = $validator->getValidatedData();
 
+      echo '<pre>' . print_r($cleanData, 1) . '</pre>';
+      exit;
+
 			try {
 				$bikeImages = $filecheck->checkFileErrors();
 			} catch (Exception $e) {

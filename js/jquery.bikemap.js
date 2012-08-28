@@ -28,7 +28,7 @@
 		mapType: 'exploration',
 		startLon: 12.38050700,
 		startLat: 51.34384400,
-		zoom: 14,
+		zoom: 4, //
 
 		// and the default options for the map
 		mapOptions: {
@@ -64,11 +64,13 @@
 		this.map = {};
 		this.markers = {};
 		this.markersLayer = false;
-		this.features = false;
+		this.features = [];
 		this.startLonLat = {};
 		this.singleMarker = false;
 		this.singleHintMarker = false;
 		this.suggested = [];
+		this.currentPopup = null;
+    this.bounds = new OpenLayers.Bounds();
 
 		// default elements and options
 		this.mapElement = mapElement;
@@ -115,6 +117,7 @@
 					// initially get all reports by doing a zoom/move event
 					this.registerDefaultEvents();
 					this._eventMapMoveZoomEnd(null);
+					this.zoomToBestFit();
 					break;
 
 				case 'report':
@@ -132,19 +135,22 @@
 					this.registerAddHintEvents();
 					break;
 
-        case 'hints':
+				case 'hints':
 					this.drawSingleMarker(this.options.startLon, this.options.startLat);
 					this._eventMapMoveZoomEnd(null);
+					this.zoomToBestFit();
 					break;
 
 				case 'searchresults':
 					this.activateFacetedSearch();
 					this.drawSearchMarkers(searchResults);
+					this.zoomToBestFit();
 					break;
 
 				default:
 					// initially get all reports by doing a zoom/move event
 					this._eventMapMoveZoomEnd(null);
+					this.zoomToBestFit();
 					break;
 			}
 		},
@@ -182,20 +188,34 @@
 		},
 
 
-		drawMarkers: function(markers, color) {
+		zoomToBestFit: function() {
+			var that = this;
+			// wrap in settimeout to wait for the response with the markers
+			// one full second should be enough to get all markers
+			window.setTimeout(function() {
+				var center = that.bounds.getCenterLonLat();
+				that.map.setCenter(center, that.map.getZoomForExtent(that.bounds));
+			}, 1000);
+		},
+
+
+		drawMarkers: function(markers, color, doNotRedraw) {
 			var that = this;
 			var image;
+			var size = new OpenLayers.Size(21, 25);
+			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
 
+			// every time before we draw markers reset the bounds
 			if (color === 'red') {
 				image = 'marker.png';
 			} else if (color === 'blue') {
 				image = 'marker-blue.png';
 			}
 
-			var size = new OpenLayers.Size(21, 25);
-			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
-
-			that.newFeatures();
+			// dont create the map and markers newly if doNotRedraw is set to true
+			if (doNotRedraw !== true) {
+				that.newFeatures();
+			}
 
 			// draw each marker on the map
 			$.each(markers, function() {
@@ -208,6 +228,9 @@
 					new OpenLayers.Projection("EPSG:4326"),
 					that.map.getProjectionObject()
 				);
+
+				// add the marker-lonLat to the bounds
+				that.bounds.extend(lonLat);
 
 				// create a feature with the given html
 				feature = new OpenLayers.Feature(that.markersLayer, lonLat);
@@ -252,8 +275,8 @@
 					lon: this.lon,
 					lat: this.lat,
 					html: '<h3>' + this.bikeType + '</h3><p>' +
-						'<strong>City:</strong> ' + this.city + '<br />' +
-						'<strong>Color:</strong> ' + this.color + '<br />' +
+						'<strong>City:</strong><br /> ' + this.city + '<br />' +
+						'<strong>Color:</strong><br /> ' + this.color + '<br /><br />' +
 						'<a href="index.php?action=reportDetails&amp;reportID=' + key + '">Show Reportdetails</a>'
 				};
 				markers.push(newMarker);
@@ -289,7 +312,6 @@
 					}
 				});
 			}
-
 		},
 
 
@@ -302,6 +324,10 @@
 					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
 				)
 			);
+			// add the single marker to the bounds
+			this.bounds.extend(new OpenLayers.LonLat(lon, lat).transform(
+				this.options.mapOptions.displayProjection, this.options.mapOptions.projection
+			));
 			this.markersLayer.addMarker(this.singleMarker);
 		},
 
@@ -391,6 +417,8 @@
 
 
 		getReportsInArea: function(left, right, top, bottom) {
+			// later on we will drawMarkers but choose not to redraw
+			// the map -- so lets create the map and features here new:
 			var that = this;
 
 			$.getJSON($.baseURL + 'index.php', {
@@ -401,9 +429,12 @@
 				'bottom': bottom
 			}, function(response) {
 				var markers = [];
+				var hints = [];
 				var marker;
+				var hint;
 
 				$.each(response, function() {
+					var report = this.reportID;
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
@@ -411,14 +442,38 @@
 						// TODO images are not in the returned data-array yet
 						// html += '<img src="/3rdparty/timthumb/timthumb.php?src=' + this.image + '&w=150" alt="" />';
 						html: '<h3>' + this.bikeType + '</h3><p>' +
-							'<strong>Color:</strong> ' + this.color + '<br />' +
-							'<strong>Noticed Theft:</strong> ' + this.noticedTheft +
-							'<br />' + '<a href="index.php?action=reportDetails&reportID=' +
-							this.reportID + '">Show Reportdetails</a>'
+							'<strong>Color:</strong><br /> ' + this.color + '<br />' +
+							'<strong>Noticed Theft:</strong><br /> ' + this.noticedTheft +
+							'<br /><br />' + '<a href="index.php?action=reportDetails&reportID=' +
+							report + '">Show Reportdetails</a>'
 					};
+
+					// now get all hints for all reports and draw them
+					//////////////////////////////////////////////////
+					$.getJSON($.baseURL + 'index.php', {
+						'action': 'hints',
+						'reportID': report
+					}, function(response) {
+						$.each(response, function() {
+
+							hint = {
+								lon: this.lon,
+								lat: this.lat,
+								html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
+									'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
+									'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
+									'<strong>Hint:</strong><br />' + this.hintWhat +
+									'<br /><br /><a href="index.php?action=reportDetails&amp;reportID=' + report + '">Show Reportdetails</a></p>'
+							};
+							hints.push(hint);
+						});
+						that.drawMarkers(hints, 'blue', true);
+					});
+					//////////////////////////////////////////////////
+
 					markers.push(marker);
 				});
-				that.drawMarkers(markers, 'red');
+				that.drawMarkers(markers, 'red', true);
 			});
 		},
 
@@ -438,9 +493,10 @@
 						lon: this.lon,
 						lat: this.lat,
 						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
-							'<strong>Time of observation:</strong> ' + this.hintWhen + '<br />' +
-							'<strong>Hint given on:</strong> ' + this.created + '<br />' +
-							this.hintWhat + '</p>'
+							'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
+							'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
+							this.hintWhat +
+							'<br /><br /><a href="index.php?action=reportDetails&amp;reportID=' + report + '">Show Reportdetails</a></p>'
 					};
 					markers.push(marker);
 				});
@@ -466,13 +522,28 @@
 		//==========================================================================
 
 		_eventMarkerMousedown: function(evt) {
-			if (this.feature.popup === null) {
-				this.feature.popup = this.feature.createPopup(this.feature.closeBox);
-				this.that.map.addPopup(this.feature.popup);
-				this.feature.popup.show();
-			} else {
-				this.feature.popup.toggle();
+			var that = this.that;
+			var feature = this.feature;
+			var popup = feature.createPopup(feature.closeBox);
+
+			// case 1: we have no popup yet
+			if (that.currentPopup === null) {
+				// add the new popup to the map
+				that.map.addPopup(popup);
+				popup.show();
+			} else { // if we have a popup check if it is the same
+				if (that.currentPopup.id === popup.id && that.currentPopup.visible()) { // samesame -- hideit
+					that.currentPopup.hide();
+				} else { // or if it is a new one
+					that.currentPopup.hide();
+					that.currentPopup = null;
+					that.map.addPopup(popup);
+					popup.show();
+				}
 			}
+
+			// set the current popup
+			that.currentPopup = popup;
 			OpenLayers.Event.stop(evt);
 		},
 

@@ -10,31 +10,43 @@ $(document).ready(function() {
 
 			// set some options for the map depending on type
 			if (mapType === 'exploration') {
-				options = { zoom: 13 }
-
-			} else if (mapType === 'report') {
-				options = { zoom: 15 }
-
-			} else if (mapType === 'report-details') {
-				lon = $(this).data('bikemaplon');
-				lat = $(this).data('bikemaplat');
-				options = { zoom: 15, startLon: lon, startLat: lat };
-
-			} else if (mapType === 'add-hint') {
-				lon = $(this).data('bikemaplon');
-				lat = $(this).data('bikemaplat');
-				options = { zoom: 15, startLon: lon, startLat: lat };
-
-			} else if (mapType === 'hints') {
-				lon = $(this).data('bikemaplon');
-				lat = $(this).data('bikemaplat');
-				reportID = $(this).data('bikemapreportid');
-				options = { zoom: 14, startLon: lon, startLat: lat, report: reportID };
+				options = {
+					zoom: 4
+				};
 
 			} else if (mapType === 'searchresults') {
-				options = { zoom: 13 }
-			}
+				options = {
+					zoom: 4
+				};
 
+			} else if (mapType === 'report') {
+				options = {
+					zoom: 15
+				};
+
+			} else if (mapType === 'report-details') {
+				options = {
+					zoom: 15,
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+
+			} else if (mapType === 'add-hint') {
+				options = {
+					zoom: 15,
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+
+			} else if (mapType === 'hints') {
+				options = {
+					zoom: 15,
+					report: $(this).data('bikemapreportid'),
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+			}
+      // create the map with the options above
 			$(this).bikemap(options);
 		});
 	}
@@ -51,7 +63,7 @@ $(document).ready(function() {
 			opacity: 0.8,
 			loop: false,
 			maxWidth: '90%',
-			maxHeight: '90%',
+			maxHeight: '90%'
 		});
 	}
 

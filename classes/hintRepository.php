@@ -46,7 +46,7 @@ class HintRepository extends QueryFactory {
 		if (!empty($hint->hintWhat)) $predicates[] = predicateLiteral(SparqlConstants::GYBBO, SparqlConstants::HINTWHAT, $hint->hintWhat);
 
 		//relation zu report:
-		$predicates[] = predicateUri(SparqlConstants::GYBBO, SparqlConstants::HINTFOR, SparqlConstants::GYBB, $hint->getUniqueReportID());
+		$predicates[] = predicateUri(SparqlConstants::GYBBO, SparqlConstants::HINTFOR, SparqlConstants::GYBB, $hint->reportID);
 
 		$to->predicates($predicates);
 
