@@ -6,21 +6,31 @@ $(document).ready(function() {
 		});
 	}
 
+	// print-button of report form
+	$('.btn-print').on('click', function(e) {
+		e.preventDefault();
+		window.print();
+	});
+
+
+	// REPORT form stuff
+	//================================================================================
+
+	// datepicker for dateoftheft field
+	// TODO pre-formatting date here (y-m-d) would be better?!
 	if ($('#dateoftheft').length) {
 		$('#dateoftheft').datepicker({
 			firstDay: 1, // i dont like mondaaaaaaaays
 			showAnim: 'fade',
 			dateFormat: "dd.mm.yy",
-			dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-			monthNames: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
-			monthNamesShort: ["Jan", "Feb", "Mrz", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-			nextText: "später",
-			prevText: "früher"
 		});
 	}
 
+	// timepicker for the start/end fields in the report-form
 	$('#timeend, #timestart').timepicker({});
 
+	// autocompletion for biketypes
+	// TODO get this data from the rdf-store
 	if ($('#biketype').length) {
 		var availableTags = [
 			"Mountainbike",
@@ -35,35 +45,32 @@ $(document).ready(function() {
 		});
 	}
 
+	// tab navigation in report form
 	$('#nav-report a').on('click', function(e) {
 		e.preventDefault();
 		$(this).tab('show');
 	});
 
-
-	// TODO quick and dirty image-upload duplication
+	// image upload duplication
 	$('.btn-add-more-images').on('click', function(e) {
 		e.preventDefault();
 		duplicateUploadArea($(this));
 	});
 
-
+  // bike-parts duplication in report from
 	$('.btn-add-more-parts').on('click', function(e) {
 		e.preventDefault();
 		duplicateParts($(this));
 	});
 
+	// summary-update for report form, requiredFieldChecker
 	if ($('#view-report').length) {
-    $('#nav-report a[href="#summary"]').on('click', function(e) {
+		$('#nav-report a[href="#summary"]').on('click', function(e) {
 			updateSummary();
 			checkRequiredReportFields();
 		});
 	}
 
-	$('.btn-print').on('click', function(e) {
-    e.preventDefault();
-		window.print();
-	});
 
 
 	//================================================================================
@@ -79,11 +86,11 @@ $(document).ready(function() {
 			if (trimmedVal.length === 0) { // if the field has no useful value
 				$input.addClass('error');
 				$badge.addClass('badge-important');
-        $('#summary-' + $input.attr('id')).text('Please enter correct value').addClass('alert');
+				$('#summary-' + $input.attr('id')).text('Please enter correct value').addClass('alert');
 			} else {
 				$input.removeClass('error');
 				$badge.removeClass('badge-important').addClass('badge-success');
-        $('#summary-' + $input.attr('id')).removeClass('alert');
+				$('#summary-' + $input.attr('id')).removeClass('alert');
 			}
 		});
 	}
@@ -91,7 +98,7 @@ $(document).ready(function() {
 	function updateSummary() {
 		$('#view-report input[type="text"], #view-report input[type="file"], #view-report textarea').each(function() {
 			var $input = $(this);
-      var summaryID = '#summary-' + $input.attr('id');
+			var summaryID = '#summary-' + $input.attr('id');
 
 			if ($input.attr('type') === 'file') {
 				$('#summary-images').html($('#summary-images').html() + $input.val() + '<br />');
@@ -101,7 +108,7 @@ $(document).ready(function() {
 					var number = $input.parent().data('bikeparts-counter');
 					$('#summary-components').html(
 						/* TODO bug with colon */
-					  $('#summary-components').html() + $input.val() + ': ' + $('#compname-' + number).val() + '<br />'
+						$('#summary-components').html() + $input.val() + ': ' + $('#compname-' + number).val() + '<br />'
 					);
 				}
 			} else {
@@ -131,7 +138,6 @@ $(document).ready(function() {
 		});
 	}
 
-
 	function duplicateParts($button) {
 		var $partsArea = $button.parent();
 		var $newParts = $partsArea.clone();
@@ -152,8 +158,6 @@ $(document).ready(function() {
 			duplicateParts($(this));
 		});
 	}
-
-
 
 
 });

@@ -76,6 +76,11 @@ require_once "views/base.view.php";
 						</div>
 
 					</div>
+					<div class="row-fluid">
+						<div id="suggestions">
+
+						</div>
+					</div>
 				</fieldset>
 			</div>
 
@@ -253,7 +258,7 @@ require_once "views/base.view.php";
 							<td id="summary-description"></td>
 						</tr>
 						<tr>
-							<td>Price</td>
+							<td>Price in €</td>
 							<td id="summary-price"></td>
 						</tr>
 						<tr>
@@ -261,7 +266,7 @@ require_once "views/base.view.php";
 							<td id="summary-manufacturer"></td>
 						</tr>
 						<tr>
-							<td>Wheels-Size</td>
+							<td>Wheel size in inch</td>
 							<td id="summary-size"></td>
 						</tr>
 						<tr>

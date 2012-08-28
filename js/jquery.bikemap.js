@@ -26,7 +26,7 @@
 		// and the default options for the map
 		mapOptions: {
 			theme: null,
-			zoom: 13,
+			zoom: 14,
 			scales: [50000000, 30000000, 10000000, 5000000],
 			projection: new OpenLayers.Projection("EPSG:900913"),
 			displayProjection: new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -38,13 +38,7 @@
 			minResolution: "auto",
 			minExtent: new OpenLayers.Bounds(-1, -1, 1, 1),
 			numZoomLevels: 19,
-			units: 'm',
-			controls: [
-				new OpenLayers.Control.MouseDefaults(),
-				new OpenLayers.Control.PanZoomBar(),
-				new OpenLayers.Control.MousePosition(),
-				new OpenLayers.Control.ScaleLine(),
-			],
+			units: 'm'
 		}
 	};
 
@@ -53,10 +47,12 @@
 	function Plugin(mapElement, options) {
 		// define some globally used domelements here
 		this.$inputRoad = $('#road');
+		this.$inputHousenumber = $('#housenumber');
 		this.$inputPostcode = $('#postcode');
 		this.$inputCity = $('#city');
-		this.$inputLon = $('#lon')
-		this.$inputLat = $('#lat')
+		this.$suggestions = $('#suggestions');
+		this.$inputLon = $('#lon');
+		this.$inputLat = $('#lat');
 
 		// this will be filled up later
 		this.map = {};
@@ -64,6 +60,7 @@
 		this.markersLayer = {};
 		this.startLonLat = {};
 		this.reportMarker = false;
+		this.suggested = [];
 
 		// default elements and options
 		this.mapElement = mapElement;
@@ -93,11 +90,7 @@
 			this.map = new OpenLayers.Map(this.mapElement,this.options.mapOptions);
 			this.map.addLayer(new OpenLayers.Layer.OSM());
 
-			this.startLonLat = new OpenLayers.LonLat(this.options.startLon, this.options.startLat);
-			this.startLonLat.transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject());
-
-			this.map.setCenter(this.startLonLat, this.options.mapOptions.zoom);
-
+			this.zoomMapToCenter(this.options.startLon, this.options.startLat);
 			this.markersLayer = new OpenLayers.Layer.Markers("Reports", {
 				projection: new OpenLayers.Projection("EPSG:4326"),
 				visibility: true,
@@ -114,8 +107,8 @@
 					// TODO this is just for testing
 					this.drawMarkers([
 						{ lat: 51.34384400, lon: 12.37050700, html: '<h2>Report, yay</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' },
-						{ lat: 51.34384400, lon: 12.38050700, html: '<h2>Report, 2</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' },
-						{ lat: 51.34384400, lon: 12.39050700, html: '<h2>Report, 3</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' }
+						{ lat: 51.34384400, lon: 12.37060700, html: '<h2>Report, 2</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' },
+						{ lat: 51.34384400, lon: 12.37070700, html: '<h2>Report, 3</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' }
 					]);
 					this.registerMapEvents();
 					break;
@@ -123,6 +116,7 @@
 				case 'report':
 					this.registerMapEvents();
 					this.registerReportEvents();
+					this.geolocate();
 					break;
 
 				// TODO more cases?
@@ -136,12 +130,6 @@
 
 		drawMarkers: function(markers) {
 			var that = this;
-
-			// TODO use this for custom markers/features?
-			// var size = new OpenLayers.Size(21, 25);
-			// console.log(size);
-			// var offset = new OpenLayers.Pixel( -(size.w / 2), -size.h);
-			// var icon = new OpenLayers.Icon("/img/marker-blue.png", size, offset);
 
 			// draw each marker on the map
 			$.each(markers, function() {
@@ -183,12 +171,33 @@
 		},
 
 
+		drawSingleMarker: function(lon, lat) {
+			if (this.reportMarker) {
+        this.reportMarker.destroy();
+			}
+			this.reportMarker = new OpenLayers.Marker(
+				new OpenLayers.LonLat(lon, lat).transform(
+					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
+				)
+			);
+			this.markersLayer.addMarker(this.reportMarker);
+		},
+
+
+		zoomMapToCenter: function(lon, lat) {
+			var centerLonLat = new OpenLayers.LonLat(lon, lat);
+			centerLonLat.transform(this.options.mapOptions.displayProjection, this.map.getProjectionObject());
+			this.map.setCenter(centerLonLat, this.options.mapOptions.zoom);
+		},
+
+
 		// Basic event handling
 		//==========================================================================
 
-    // TODO this is not working yet
+		// TODO this is not working yet
 		geolocate: function() {
-			var geolocate = new OpenLayers.Control.Geolocate({
+			var that = this;
+			var geo = new OpenLayers.Control.Geolocate({
 				bind: false,
 				geolocationOptions: {
 					enableHighAccuracy: false,
@@ -197,23 +206,21 @@
 				}
 			});
 
-			map.addControl(geolocate);
-			geolocate.events.register("locationupdated", geolocate, function(e) {
-				map.zoomToExtent(vector.getDataExtent());
-				firstGeolocation = false;
-				this.bind = true;
+			that.map.addControl(geo);
+			geo.events.register("locationupdated", geo, function(e) {
+				// TODO in the future? set road city etc. see lookup
+				that.drawSingleMarker(e.position.coords.longitude, e.position.coords.latitude);
+				that.zoomMapToCenter(e.position.coords.longitude, e.position.coords.latitude);
+				that._reverseLonLatLookup(e.position.coords.longitude, e.position.coords.latitude);
 			});
 
 			$('.btn-findme').on('click', function(e) {
-				geolocate.deactivate();
-				geolocate.watch = false;
-				geolocate.activate();
+				e.preventDefault();
+				geo.deactivate();
+				geo.activate();
 			});
 
 		},
-
-
-/////////////////////////////////////
 
 
 		registerMapEvents: function() {
@@ -260,24 +267,14 @@
 
 
 		_eventMapClick: function(evt) {
-			var coord = this.map.getLonLatFromViewPortPx(evt.xy);
-			var lonLat = this.map.getLayerPxFromViewPortPx(evt.xy);
+			var lonLat = this.map.getLonLatFromViewPortPx(evt.xy);
+			lonLat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			this.drawSingleMarker(lonLat.lon, lonLat.lat);
 
-			coord.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
 
-			// if there is no marker, create one
-			// TODO this does not work properly -- marker is set but not shown
-			if (!this.reportMarker) {
-				this.reportMarker = new OpenLayers.Marker(lonLat);
-				this.markersLayer.addMarker(this.reportMarker);
-
-			} else { // just move it
-				this.reportMarker.moveTo(lonLat);
-			}
-
-			this.$inputLon.val(coord.lon);
-			this.$inputLat.val(coord.lat);
-			this._reverseLonLatLookup(coord.lon, coord.lat);
+			this.$inputLon.val(lonLat.lon);
+			this.$inputLat.val(lonLat.lat);
+			this._reverseLonLatLookup(lonLat.lon, lonLat.lat);
 		},
 
 
@@ -295,6 +292,7 @@
 				'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
 				function(data) {
 					that.$inputRoad.val(data.address.road);
+					that.$inputHousenumber.val(data.address.house_number);
 					that.$inputPostcode.val(data.address.postcode);
 					that.$inputCity.val(data.address.city);
 				}
@@ -304,18 +302,46 @@
 
 
 		_lonLatLookup: function() {
+			var that = this;
 			var city = this.$inputCity.val();
 			var road = this.$inputRoad.val();
 			var postcode = this.$inputPostcode.val();
+			var housenumber = this.$inputHousenumber.val();
+			var htmlout = '<h2>Did you mean...</h2>';
 
-			// TODO hardcoded GERMANY... /de/
+			// TODO hardcoded GERMANY... /de/ - remove this?
 			var url = 'http://nominatim.openstreetmap.org/search/de/' + postcode + ' '
-							+ city + '/' + road + '?format=json&polygon=1&addressdetails=1';
+							+ city + '/' + road + '/' + housenumber + '?format=json&polygon=1&addressdetails=1&osm_type=N';
 			url = encodeURI(url);
 			$.getJSON(url, function(data) {
+				that.suggested = [];
 
-				// TODO do sth. useful if the data is useful
-				console.log(data);
+				$.each(data, function() {
+					that.suggested[this.place_id] = this;
+					htmlout += '<a class="suggest-link" href="place_id#' + this.place_id + '">' + this.display_name + '</a><br />';
+				});
+
+				that.$suggestions.html(htmlout);
+				$('.suggest-link').on('click', function(e) {
+          e.preventDefault();
+					var placeID = $(this).attr('href').replace('place_id#', '');
+          var place = that.suggested[placeID];
+
+					// TODO refactor! see _reverseLonLatLookup
+					that.$inputRoad.val(place.address.road);
+					that.$inputHousenumber.val(place.address.house_number);
+					that.$inputPostcode.val(place.address.postcode);
+					that.$inputCity.val(place.address.city);
+					that.$inputLon.val(place.lon);
+					that.$inputLat.val(place.lat);
+
+					// set the marker on the map
+					that.drawSingleMarker(place.lon, place.lat);
+
+					// set map to center around new marker
+					that.zoomMapToCenter(place.lon, place.lat);
+
+				});
 			});
 		},
 

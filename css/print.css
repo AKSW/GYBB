@@ -1,0 +1,60 @@
+@media print {
+
+/*=============== Print Styles ===============*/
+* {
+	background: transparent !important;
+	color: black !important;
+	text-shadow: none !important;
+	box-shadow: none !important;
+	filter: none !important;
+	-ms-filter: none !important;
+}
+
+a,
+a:visited {
+	text-decoration: underline;
+}
+
+pre,
+blockquote {
+	border: 1px solid #999;
+	page-break-inside: avoid;
+}
+
+thead {
+	display: table-header-group;
+}
+
+tr,
+img {
+	page-break-inside: avoid;
+}
+
+img {
+	max-width: 100% !important; height: auto !important;
+}
+
+@page {
+	margin: 1cm;
+}
+
+p,
+h2,
+h3 {
+	orphans: 3;
+	widows: 3;
+}
+
+h2,
+h3 {
+	page-break-after: avoid;
+}
+
+#header,
+.navbar,
+.nav-tabs {
+	display: none;
+}
+
+} /* end @media print */
+

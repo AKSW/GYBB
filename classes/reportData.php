@@ -1,11 +1,12 @@
 <?php
-require_once 'classes/user.php';
+require_once('classes/user.php');
+require_once('classes/bikePartService.php');
 
 class ReportData {
 
 	public $road;
 	public $housenumber;
-	public $postcode
+	public $datacode;
 	public $city;
 	public $lon;
 	public $lat;
@@ -28,19 +29,30 @@ class ReportData {
 	public $images;
 	public $components;
 
-	public $user;
-	public $creationDate;
-
 	private $id;
+	public $creationDate;
+	public $user;
 
 
-	function __construct() {
-		$this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
+        /**
+         * Initializes a new Report Data. 
+         */
+        function initialize() {
+            $this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
+            $this->creationDate = date_format(date_create(), 'Y-m-d');
+            $this->user = User::getCurrentUser();
+
+        }
+        
+
+	function getUniqueID() {
+		return 'report'.$this->id;
 	}
 
-	function uniqueId() {
-		return $this->id;
-	}
+	function getUniqueBikeID() {
+              return 'bike'.$this->id;
+        }
+
 
 }
 

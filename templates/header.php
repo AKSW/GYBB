@@ -15,6 +15,7 @@ require_once('classes/user.php');
 		<link rel="stylesheet" href="3rdparty/twitterBootstrap/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="3rdparty/jquery-ui/css/smoothness/jquery-ui-1.8.20.custom.css" />
 		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/print.css" />
 
 		<script src="js/debugging.js"></script>
 		<script src="js/jquery-1.7.2.js"></script>
@@ -47,10 +48,43 @@ require_once('classes/user.php');
 				<a href="index.php?action=home" class="brand">Get your bike back</a>
 
 				<ul class="nav">
-					<li><a href="index.php?action=map">Map</a></li>
+					<li><a href="index.php?action=map">Explore</a></li>
 					<?php  // add nav items for logged-in users
 						if ($user = User::getCurrentUser()) { ?>
 					<li><a href="index.php?action=report">Add Report</a></li>
+                                        <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Export<b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                          <li class="nav-header">
+                                            choose format
+                                          </li>
+                                          <li>
+                                            <a href="#">RDF</a>
+                                          </li>
+                                          <li>
+                                            <a href="#">Turtle</a>
+                                          </li>
+                                          <li>
+                                            <a href="#">RDF/XML</a>
+                                          </li>
+                                          <li>
+                                            <a href="#">RDF</a>
+                                          </li>
+                                          <li class="divider">
+                                          </li>
+                                          <li class="nav-header">
+                                            Admin
+                                          </li>
+                                          <li>
+                                            <a href="#">Save Graph</a>
+                                          </li>
+                                          <li>
+                                            <a href="#">Clear Graph</a>
+                                          </li>
+                                        </ul>
+                                        </li>
+                                </ul>
+              
 					<?php } ?>
 
 				</ul>
@@ -79,7 +113,7 @@ require_once('classes/user.php');
 
 			<h1 class="span3"><a href="index.php?action=home" class="ir logo">Get your bike back</a></h1>
 			<div class="span9">
-				<h2>Crowdsourcing</h2>
+				<h2>CrowdInquiry</h2>
 				<h3>The semantic option to get your bike back</h3>
 			</div>
 		</header>

@@ -9,14 +9,17 @@
  */
 class BikePart {
   
-  public $bikePartType;
+  public $type;
   
-  public $value;
+  public $label;
+  public $uri;
   
   function __construct($value, $type) {
-    $this->bikePartType = $type;
-    $this->value = $value;
+    $this->type = $type;
+    $this->label = $value;
+	$this->uri = urlencode(firstCharToUpper($value));
   }
+  
   
   
   
@@ -38,7 +41,7 @@ class BikePartType {
       $this->label = $label;
       require_once 'classes/utils.php';
       $this->class = urlencode(firstCharToUpper($label));
-        $this->predicate = urlencode(firstCharToLower($label) );
+      $this->predicate = urlencode(firstCharToLower($label) );
     } 
     
 

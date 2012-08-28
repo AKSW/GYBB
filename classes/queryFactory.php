@@ -14,20 +14,20 @@ class QueryFactory extends SparqlConstants {
         if (!function_exists('odbc_connect'))
             throw new RepositoryException("odbc extension not found");
 
-        
+
         $this->connection = odbc_connect(VOS_DSN, VOS_USER, VOS_PASSWORD);
         if (false == $this->connection) {
             throw new RepositoryException($this->getLastError());
         }
         @odbc_autocommit($this->connection, true);
-        
+
         $this->graphURI = $graphURI;
     }
 
     function graphURI() {
       return $this->graphURI;
     }
-    
+
     function __destruct() {
         $this->_closeConnection();
     }
@@ -35,11 +35,11 @@ class QueryFactory extends SparqlConstants {
     function insertPrefix() {
       return "INSERT INTO <" . $this->graphURI() . "> {\n";
     }
-    
+
     function insertSuffix() {
       return "  } \n";
     }
-    
+
     function asUniqueIdentifier($iri, $sequence) {
             return '`sql:sprintf_iri("' .  $iri . '#%s" , sql:sequence_next("' . $sequence . '"))`';
     }
@@ -58,55 +58,55 @@ class QueryFactory extends SparqlConstants {
 //        if(!strpos($subject, 'iri(')) {
 //            $subject = '<' . $subject . '>' ;
 //        }
-//        
+//
 //        $insertSparql = 'INSERT INTO GRAPH <' . $this->graphURI . '> {
 //                ' . $subject . ' <' . $predicate . '> ' . $object . '
 //            }';
 //
 //        //@odbc_result_all($this->_execSparql($insertSparql));
-//        
+//
 //    }
-//    
+//
 //    public function ttl($ttl) {
-//        
-//        
-//        $resultId = odbc_exec($this->connection, 'CALL DB.DBA.TTLP(' 
-//                . "'" . $ttl  . "'," 
+//
+//
+//        $resultId = odbc_exec($this->connection, 'CALL DB.DBA.TTLP('
+//                . "'" . $ttl  . "',"
 //                . "'', "
 //                . "'" . $this->graphURI . "',"
 //                . "0" .  ')');
-//        
-//        
+//
+//
 //        if (false === $resultId) {
 //            print_r(str_replace("\n", "<br>", htmlentities($ttl)) );
 //            $message = sprintf('SPARQL Error: %s in query: %s', $this->getLastError(), htmlentities($sparqlQuery));
 //            throw new RepositoryException($message);
 //        }
-//        
+//
 //        //odbc_result_all($resultId);
-//        
+//
 //        return $resultId;
 //    }
 
     public function execSparql($sparqlQuery) {
         $sparqlQuery = addcslashes($sparqlQuery, '\'\\');
 
-        
-        
+
+
         // build Virtuoso/PL query
         $virtuosoPl = 'SPARQL ' . $sparqlQuery;
         //$virtuosoPl = 'CALL DB.DBA.SPARQL_EVAL(\'' . $sparqlQuery . '\', ' . $graphUri . ', 0);';
 //        print_r("<p>Query</p>");
 //        print_r(htmlentities($virtuosoPl));
 //        print_r("<p>Query</p>");
-//        
+//
         $resultId = @odbc_exec($this->connection, $virtuosoPl);
-        
+
         if (false === $resultId) {
             $message = sprintf('SPARQL Error: %s in query: %s', $this->getLastError(), htmlentities($sparqlQuery));
             throw new RepositoryException($message);
         }
-        
+
         return $resultId;
     }
 
@@ -121,8 +121,8 @@ class QueryFactory extends SparqlConstants {
             return $message;
         }
     }
-    
-    
+
+
     public function fetchResult($resultId) {
         if ($resultId) {
           return odbc_fetch_array($resultId);
