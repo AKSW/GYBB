@@ -1,8 +1,9 @@
 <?php
 require_once('classes/labels.php');
+require_once('classes/sparqlConstants.php');
 
 
-function inputHelper($id, $wrap = '', $placeholder = '', $required = false, $type = 'text',  $value = '', $label = '') {
+function inputHelper($id, $wrap = '', $placeholder = '', $required = false, $type = 'text', $class = '', $value = '', $label = '') {
 	$lbl = new Labels();
 	$labels = $lbl->getLabels();
 	$output = '';
@@ -15,7 +16,8 @@ function inputHelper($id, $wrap = '', $placeholder = '', $required = false, $typ
 				. '<label for="' . $id . '">' . $label . '</label>' . "\n"
 				. '<input type="text" id="' . $id . '" name="' . $id
 				. '" value="' . $value . '" placeholder="' . $placeholder . '"';
-			if ($required) $output .= 'required="required"';
+			if (!empty($class)) $output .= ' class="' . $class . '"';
+			if ($required) $output .= ' required="required"';
 			$output .= '/>' . "\n";
 			break;
 		case 'textarea':
@@ -23,6 +25,7 @@ function inputHelper($id, $wrap = '', $placeholder = '', $required = false, $typ
 				. '<label for="' . $id . '">' . $label . '</label>' . "\n"
 				. '<textarea rows="5" cols="50" id="' . $id . '" name="' . $id . '" placeholder="'
 				. $placeholder . '"';
+			if (!empty($class)) $output .= ' class="' . $class . '"';
 		  if ($required) $output .= 'required="required"';
 			$output .= '>' . $value . '</textarea>' . "\n";
 			break;
@@ -50,7 +53,7 @@ function summaryHelper($id, $label = '') {
 }
 
 
-function reportDetailsHelper($id, $value = '', $label = '') {
+function reportDetailsHelper($id, $label = '', $value = '') {
 	$lbl = new Labels();
 	$labels = $lbl->getLabels();
 
@@ -60,9 +63,48 @@ function reportDetailsHelper($id, $value = '', $label = '') {
 		$label = $id;
 	}
 
-	// TODO maybe we wanna show these values?
 	echo '<tr><td>' . $label . '</td><td>' . $value . '</td>';
+}
+
+
+function cleanupSparqlResults($results)  {
+	$finalResults = array();
+	$constants = new SparqlConstants();
+
+	foreach ($results as $singleResult) {
+		$singleTempArray = array();
+		foreach ($singleResult as $key => $results) {
+
+			// cycle through all uris that may be stripped from the value
+			foreach ($constants->allPrefixes as $uri) {
+				if (strpos($results->value, $uri) !== false) {
+					$value = str_replace($uri, '', $results->value);
+					$singleTempArray[$key] = $value;
+				}
+			}
+
+			// if there was no uri to strip, use the normal value
+			if (!isset($singleTempArray[$key])) {
+				$singleTempArray[$key] = $results->value;
+			}
+		}
+
+		$finalResults[] = $singleTempArray;
+	}
+
+	return $finalResults;
 
 }
+
+
+function readableDateTime($dateTime)  {
+	$dateTimeArray = explode('T', $dateTime);
+	$dates = explode('-', $dateTimeArray[0]);
+	$time = substr($dateTimeArray[1], 0, -4);
+
+	return $dates[2] . '.' . $dates[1] . '.' . $dates[0] . ' ' . $time;
+}
+
+
 
 ?>

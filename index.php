@@ -4,7 +4,7 @@ include_once 'classes/autoloader.php';
 include_once 'classes/user.php';
 
 
- 
+
 
 
 
@@ -26,8 +26,9 @@ class FrontController {
 		'logout' => 'controller/logout.php',
 		'marker' => 'controller/marker.php',
 		'reportDetails' => 'controller/reportDetails.php',
-		'reportsInArea' => 'controller/reportsInArea.php'
-
+		'reportsInArea' => 'controller/reportsInArea.php',
+		'suggestion' => 'controller/suggestion.php',
+		'bikeImages' => 'controller/bikeImages.php'
 );
 
 

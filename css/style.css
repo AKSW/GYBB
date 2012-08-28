@@ -15,6 +15,9 @@ form li {
 legend {
   border-bottom: 0;
 }
+table {
+	margin: 20px 0;
+}
 
 
 /*=============== layout ===============*/
@@ -70,7 +73,13 @@ legend {
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
-.bikemap-report {
+/* overwrite margin from openlayers */
+div.olMap {
+	margin: 20px 0 !important;
+}
+
+.bikemap-report,
+.bikemap-report-details {
 	height: 400px;
 }
 
@@ -111,6 +120,30 @@ legend {
   margin-right: 20px;
 }
 
+.stolen-bike {
+	position: relative;
+}
+
+.stolen-image {
+	position: absolute; top: 10px; right: -200px;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+	z-index: 10000;
+}
+
+
+.report-details-images {
+  margin-top: 20px;
+}
+
+.report-details-images a {
+	display: block; float: left; margin: 0 20px 20px 0;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+.table-report-details td:first-child {
+	width: 45%;
+}
+
 /*=============== open layers style ===============*/
 
 .olPopupContent {
@@ -121,13 +154,27 @@ legend {
 /*=============== helpers ===============*/
 
 .ir {
-	color: transparent;
-	font: 0/0 a;
-	background-repeat: no-repeat;
+  border: 0;
+  background-color: transparent;
+  color: transparent; font: 0/0 a;
+  text-shadow: none;
 }
 
 .hidden {
-  display: none;
+  display: none !important;
+  visibility: hidden;
 }
 
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
 
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+}

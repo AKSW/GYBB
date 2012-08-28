@@ -71,13 +71,13 @@ class ReportView extends BaseView {
 				<fieldset class="well">
 					<legend>Date and time of theft</legend>
 					<p>
-						Input date in format: DD.MM.YYYY and time in format: HH:MM or use the included widgets (just click it!)
+						Input date in format: DD.MM.YYYY HH:MM or use the included widgets (just click it!)
 					</p>
 					<ul>
 						<?php
-							inputHelper('dateOfTheft', 'li', 'Click here to add a date', true);
-							inputHelper('lastSeen', 'li');
-							inputHelper('noticedTheft', 'li');
+							inputHelper('lastSeen', 'li', '', true);
+							inputHelper('noticedTheft', 'li', '', true);
+							inputHelper('circumstances', 'li', 'Describe the circumstances of the bike-theft', false, 'textarea');
 						?>
 					</ul>
 				</fieldset>
@@ -90,13 +90,13 @@ class ReportView extends BaseView {
 					<div class="row-fluid">
 						<ul class="span4">
 							<?php
-								inputHelper('bikeType', 'li', 'Mountainbike, Racing-Bike etc.', true);
-								inputHelper('color', 'li', 'green, black, purple', true);
+								inputHelper('bikeType', 'li', 'Mountainbike, Racing-Bike etc.', true, 'text', 'suggestion');
+								inputHelper('color', 'li', 'green, black, purple', true, 'text', 'suggestion');
 								inputHelper('comment', 'li', '...', false, 'textarea');
 								inputHelper('price', 'li', 'approx. when stolen');
-								inputHelper('manufacturer', 'li', 'Cannondale, Bianchi...');
+								inputHelper('manufacturer', 'li', 'Cannondale, Bianchi...', false, 'text', 'suggestion');
 								inputHelper('wheelSize', 'li', 'usually 26 or 28');
-								inputHelper('frameNumber', 'li', '');
+								inputHelper('frameNumber', 'li');
 							?>
 						</ul>
 
@@ -109,8 +109,8 @@ class ReportView extends BaseView {
 
 							<ul class="form-inline">
 								<li class="bikeparts" data-bikeparts-counter="1">
-									<label for="comptype-1">Type</label><input type="text" name="comptype[]" id="comptype-1" />
-									<label for="compname-1">Name</label><input type="text" name="compname[]" id="compname-1" />
+									<label for="comptype-1">Type</label><input type="text" name="comptype[]" id="comptype-1" class="suggestion" />
+									<label for="compname-1">Name</label><input type="text" name="compname[]" id="compname-1" class="suggestion" />
 									<button class="btn btn-add-more-parts"><i class="icon-plus"></i></button>
 								</li>
 							</ul>
@@ -123,6 +123,9 @@ class ReportView extends BaseView {
 				<fieldset class="well">
 					<!-- TODO make a beautiful form -->
 					<legend>Images of your bike</legend>
+					<p>
+						JPG-Images only, maxmimum file size: 1 MB. Click the plus-button to add more than one image.
+					</p>
 					<ul>
 						<li class="bikeimage-uploadarea" data-upload-counter="1">
 							<label for="bikeimage-1">Image No. <span class="counter">1</span></label>
@@ -134,14 +137,14 @@ class ReportView extends BaseView {
 				</fieldset>
 			</div>
 
-
 			<div class="tab-pane" id="police-information">
 				<fieldset class="well">
 					<legend>Police related information</legend>
 					<ul>
 						<?php
-							inputHelper('registrationCode', 'li', '');
-							inputHelper('policeStation', 'li', '');
+							inputHelper('registrationCode', 'li');
+							inputHelper('policeStation', 'li', '', false, 'text', 'suggestion');
+							inputHelper('findersFee', 'li', 'Beer, money - to improve hints');
 						?>
 					</ul>
 				</fieldset>
@@ -165,11 +168,12 @@ class ReportView extends BaseView {
 
 						<table class="span4 table table-condensed">
 							<?php
-								summaryHelper('dateOfTheft');
 								summaryHelper('lastSeen');
 								summaryHelper('noticedTheft');
+								summaryHelper('circumstances');
 								summaryHelper('registrationCode');
 								summaryHelper('policeStation');
+								summaryHelper('findersFee');
 							?>
 						</table>
 

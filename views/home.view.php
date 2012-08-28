@@ -1,7 +1,15 @@
 <?php
-require_once "views/base.view.php";
+require_once('views/base.view.php');
+require_once('config/config.php');
 
 	class HomeView extends BaseView {
+
+		private $recentlyStolen;
+
+		function __construct($recentlyStolen)  {
+			$this->recentlyStolen = $recentlyStolen;
+
+		}
 
 		protected function doShow() { ?>
 			<div class="span12">
@@ -18,11 +26,23 @@ require_once "views/base.view.php";
 						<article class="recently-stolen box">
 							<h2>Recently stolen</h2>
 							<ol>
-								<li> <a href="">Date, Place, Color etc.</a> </li>
-								<li> <a href="">Date, Place, Color etc.</a> </li>
-								<li> <a href="">Date, Place, Color etc.</a> </li>
-								<li> <a href="">Date, Place, Color etc.</a> </li>
-								<li> <a href="">Date, Place, Color etc.</a> </li>
+							<?php
+								if (is_array($this->recentlyStolen) && !empty($this->recentlyStolen))  {
+									foreach ($this->recentlyStolen as $singleStolen) { ?>
+										<li id="<?php echo $singleStolen['bikeID']; ?>" class="stolen-bike">
+											<a href="<?php echo BASE_URL ?>index.php?action=reportDetails&reportID=<?php echo $singleStolen['reportID']; ?>">
+											<?php echo readableDateTime($singleStolen['noticedTheft']) . ', ' . $singleStolen['city'] . ' - ' . $singleStolen['bikeType']; ?>
+											</a>
+											<?php if (isset($singleStolen['image'])) { ?>
+											<div class="hidden stolen-image">
+												<img src="/3rdparty/timthumb/timthumb.php?src=<?php echo $singleStolen['image']; ?>&w=200" alt="" />
+											</div>
+											<?php } ?>
+										</li>
+									<?php
+									}
+								}
+								?>
 							</ol>
 						</article>
 

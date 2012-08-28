@@ -12,6 +12,11 @@ $(document).ready(function() {
 				options = { zoom: 13 }
 			} else if (mapType === 'report') {
 				options = { zoom: 15 }
+			} else if (mapType === 'report-details') {
+				var lon = $(this).data('bikemaplon');
+				var lat = $(this).data('bikemaplat');
+				log(lon, lat);
+        options = { zoom: 15, startLon: lon, startLat: lat }
 			}
 
 			$(this).bikemap(options);
@@ -34,35 +39,41 @@ $(document).ready(function() {
 		});
 	}
 
-	// REPORT form stuff
-	//================================================================================
 
-	// datepicker for dateoftheft field
-	if ($('#dateOfTheft').length) {
-		$('#dateOfTheft').datepicker({
-			firstDay: 1, // i dont like mondaaaaaaaays
-			showAnim: 'fade',
-			maxDate: '0d',
-			dateFormat: "dd.mm.yy",
+  // load images for recently stolen bikes
+	if ($('.stolen-bike').length)  {
+		$('.stolen-bike').on('mouseenter', function(e)  {
+			$(this).find('.stolen-image').removeClass('hidden');
+		});
+		$('.stolen-bike').on('mouseleave', function(e)  {
+			$(this).find('.stolen-image').addClass('hidden');
 		});
 	}
 
+
+	// REPORT form stuff
+	//================================================================================
+
 	// timepicker for the start/end fields in the report-form
-	$('#lastSeen, #noticedTheft').timepicker({});
+	$('#lastSeen, #noticedTheft').datetimepicker({
+		firstDay: 1, // i dont like mondaaaaaaaays
+		showAnim: 'fade',
+		maxDate: '0d',
+		dateFormat: "dd.mm.yy",
+		timeFormat: "hh:ss"
+	});
 
-	// autocompletion for biketypes
-	// TODO get this data from the rdf-store
-	if ($('#bikeType').length) {
-		var availableTags = [
-			"Mountainbike",
-			"Rennrad",
-			"Hollandrad",
-			"Trekkingbike",
-			"Citybomber"
-		];
+	// autocompletion for some fields
+	if ($('.suggestion').length) {
+		$('.suggestion').each(function()  {
+			var id = $(this).attr('id');
+			// just take the firstpart before the dash
+			var splitted = id.split('-');
+			var type = splitted[0];
 
-		$('#bikeType').autocomplete({
-			source: availableTags
+			$(this).autocomplete({
+				source: 'index.php?action=suggestion&type=' + type
+			});
 		});
 	}
 

@@ -37,22 +37,19 @@ class ReportService {
 		$report->road = $data['road'];
 		$report->house_number = $data['house_number'];
 
-		// TODO sanitize postcode?!
 		$report->postcode = $data['postcode'];
 
 		$report->city = $data['city'];
 		$report->lon = (float) $data['lon'];
 		$report->lat = (float) $data['lat'];
 
-		$theft = explode('.' , $data['dateOfTheft']);
-		$report->dateOfTheft = $theft[2] . '-' . $theft[1] . '-' . $theft[0];
-
-		// TODO hour xx:xx -- parse
-		$report->lastSeen = $data['lastSeen'];
-		$report->noticedTheft = $data['noticedTheft'];
+		$report->lastSeen = $this->buildDateTime($data['lastSeen']);
+		$report->noticedTheft = $this->buildDateTime($data['noticedTheft']);
+		$report->circumstances = $data['circumstances'];
 
 		$report->registrationCode = $data['registrationCode'];
 		$report->policeStation = $data['policeStation'];
+		$report->findersFee = $data['findersFee'];
 
 		$report->bikeType = $data['bikeType'];
 		$report->color = $data['color'];
@@ -61,9 +58,21 @@ class ReportService {
 		$report->manufacturer = $data['manufacturer'];
 		$report->wheelSize = (int) $data['wheelSize'];
 		$report->frameNumber = $data['frameNumber'];
-
-		// $this->components = $data['components'];
 	}
+
+	private function buildDateTime($dateString)  {
+		$dateArray = explode(' ', $dateString);
+		// get the date and time separately
+		$date = $dateArray[0];
+		$time = $dateArray[1];
+
+		// get days and reorder
+		$singleDates = explode('.', $date);
+
+		return $singleDates[2] . '-' . $singleDates[1] . '-' . $singleDates[0] . 'T' . $time . ':00Z';
+	}
+
+
 
 }
 

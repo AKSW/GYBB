@@ -26,14 +26,15 @@ class ReportRepository extends QueryFactory {
 	}
 
 	public function saveReport($report, $bikeImages) {
-		//TODO triplify/merge place
-		//TODO truplify/merge policeStation
-		//Triplify Bike
+		// TODO triplify/merge place
+		// TODO truplify/merge policeStation
+
+		// Triplify Bike
 		$sparqlBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
 		$builder = $this->triplifyBike($report, $bikeImages, $sparqlBuilder);
 		$this->execSparql($builder->toSparql());
 
-		//Triplify Report
+		// Triplify Report
 		$sparqlBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
 		$builder = $this->triplifyReportData($report, $sparqlBuilder);
 		$this->execSparql($builder->toSparql());
@@ -43,7 +44,7 @@ class ReportRepository extends QueryFactory {
 		$to->subject(SparqlBuilder::GYBB, $bikeData->getUniqueBikeID());
 
 		$predicates = array();
-		//triplify bikeparts
+		// triplify bikeparts
 		if (isset($bikeData->components) && is_array($bikeData->components)) {
 			foreach ($bikeData->components as $bikePart) {
 				$bikePartType = $bikePart->type;
@@ -55,12 +56,11 @@ class ReportRepository extends QueryFactory {
 		if (!empty($bikeData->comment)) $predicates[] = predicateLiteral(SparqlBuilder::RDFS, SparqlBuilder::COMMENT, $bikeData->comment);
 		if (!empty($bikeData->manufacturer)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::MANUFACTURER, $bikeData->manufacturer);
 		if (!empty($bikeData->frameNumber)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::FRAMENUMBER, $bikeData->frameNumber);
-		if (!empty($bikeData->registrationCode)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::REGISTRYCODE, $bikeData->registrationCode);
-		if (!empty($bikeData->policeStation)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::REPORTEDTO, $bikeData->policeStation);
+		if (!empty($bikeData->registrationCode)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::REGISTRATIONCODE, $bikeData->registrationCode);
+		if (!empty($bikeData->policeStation)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::POLICESTATION, $bikeData->policeStation);
 		if (!empty($bikeData->price)) $predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::PRICE, $bikeData->price, SparqlBuilder::XSD_INT);
 		if (!empty($bikeData->wheelSize)) $predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::WHEELSIZE, $bikeData->wheelSize, SparqlBuilder::XSD_INT);
 
-    // TODO this is just a test thats adds the same image to every bike
 		if (is_array($bikeImages) && !empty($bikeImages)) {
 			foreach ($bikeImages as $image) {
 				if (substr($image, -4) === '.jpg') {
@@ -80,19 +80,13 @@ class ReportRepository extends QueryFactory {
 
 		$predicates = array();
 		$predicates[] = predicateUri(SparqlBuilder::RDF, SparqlBuilder::RDF_TYPE, SparqlBuilder::GYBBO, SparqlBuilder::REPORT);
-		$predicates[] = typedLiteral(SparqlBuilder::DCT, SparqlBuilder::CREATED, $reportData->created, SparqlBuilder::XSD_DATE);
+		$predicates[] = typedLiteral(SparqlBuilder::DCT, SparqlBuilder::CREATED, $reportData->created, SparqlBuilder::XSD_DATETIME);
 
-		// TODO dc:creator user (email? name?)
-
-		// DATE AND TIME
-		if (!empty($reportData->dateOfTheft) && preg_match('/\d{4}\-\d{2}\-\d{2}/', $reportData->dateOfTheft)) {
-			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::DATEOFTHEFT, $reportData->dateOfTheft, SparqlBuilder::XSD_DATE);
+		if (!empty($reportData->lastSeen) && preg_match('/\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}Z/', $reportData->lastSeen)) {
+			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::LASTSEEN, $reportData->lastSeen, SparqlBuilder::XSD_DATETIME);
 		}
-		if (!empty($reportData->lastSeen) && preg_match('/\d{2}:\d{2}/', $reportData->lastSeen)) {
-			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::LASTSEEN, $reportData->lastSeen, SparqlBuilder::XSD_TIME);
-		}
-		if (!empty($reportData->noticedTheft) && preg_match('/\d{2}:\d{2}/', $reportData->noticedTheft)) {
-			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::NOTICEDTHEFT, $reportData->noticedTheft, SparqlBuilder::XSD_TIME);
+		if (!empty($reportData->noticedTheft) && preg_match('/\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}Z/', $reportData->noticedTheft)) {
+			$predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::NOTICEDTHEFT, $reportData->noticedTheft, SparqlBuilder::XSD_DATETIME);
 		}
 
     // user email and name
@@ -110,6 +104,8 @@ class ReportRepository extends QueryFactory {
 		if (!empty($reportData->house_number)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::HOUSENUMBER, $reportData->house_number);
 		if (!empty($reportData->city)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::CITY, $reportData->city);
 		if (!empty($reportData->postcode)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::POSTCODE, $reportData->postcode);
+		if (!empty($reportData->circumstances)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::CIRCUMSTANCES, $reportData->circumstances);
+		if (!empty($reportData->findersFee)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::FINDERSFEE, $reportData->findersFee);
 
 		//relation zu Bike IRI:
 		$predicates[] = predicateUri(SparqlBuilder::GYBBO, SparqlBuilder::DESCRIBESTHEFTOF, SparqlBuilder::GYBB, $reportData->getUniqueBikeID());

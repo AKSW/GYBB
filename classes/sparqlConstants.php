@@ -18,7 +18,6 @@ class SparqlConstants {
 		'dbpedia2' => 'http://dbpedia.org/property/',
 		'dbpedia' => 'http://dbpedia.org/',
 		'skos' => 'http://www.w3.org/2004/02/skos/core#',
-		/* TODO use BASE_URL here does not work? stupid php */
 		'gybb' => 'http://getyourbikeback.webgefrickel.de/resource/',
 		'gybbo' => 'http://getyourbikeback.webgefrickel.de/ontology/',
 		'geo' => 'http://www.w3.org/2003/01/geo/wgs84_pos#',
@@ -37,7 +36,7 @@ class SparqlConstants {
 
 	const XSD = "xsd";
 	const XSD_DATE = "xsd:date";
-	const XSD_TIME = "xsd:time";
+	const XSD_DATETIME = "xsd:dateTime";
 	const XSD_DOUBLE = "xsd:double";
   const XSD_STRING = "xsd:string";
   const XSD_INT = "xsd:integer";
@@ -51,15 +50,16 @@ class SparqlConstants {
 	const WHEELSIZE = "wheelSize";
 	const MANUFACTURER = "manufacturer";
 	const COMMENT = "comment";
+	const CIRCUMSTANCES = "circumstances";
 	const FRAMENUMBER = "frameNumber";
 	const PRICE = "price";
-	const REGISTRYCODE = "registryCode";
-	const REPORTEDTO = "reportedTo";
+	const REGISTRATIONCODE = "registrationCode";
+	const POLICESTATION = "policeStation";
+	const FINDERSFEE = "findersFee";
 	const DESCRIBESTHEFTOF = "describesTheftOf";
 	const DEPICTION = "depiction";
 
 	const CREATED = "created";
-	const DATEOFTHEFT = "dateOfTheft";
 	const LASTSEEN = "lastSeen";
 	const NOTICEDTHEFT = "noticedTheft";
 

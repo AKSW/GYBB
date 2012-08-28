@@ -4,6 +4,8 @@
 define('DEBUG', true);
 
 // where your base belongs to us
+// NOTE if you change your baseurl you should change the DEFAULT_LGD_GRAPH value
+// and some prefixes in the classes/sparqlConstants.php too
 define('BASE_URL', 'http://getyourbikeback.webgefrickel.de/');
 
 // where all the RDF goes

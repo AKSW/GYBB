@@ -62,7 +62,7 @@
 		this.markersLayer = false;
 		this.features = false;
 		this.startLonLat = {};
-		this.reportMarker = false;
+		this.singleMarker = false;
 		this.suggested = [];
 
 		// default elements and options
@@ -90,6 +90,7 @@
 
 
 		createMap: function() {
+			log('map create');
 			this.map = new OpenLayers.Map(this.mapElement,this.options.mapOptions);
 			this.map.addLayer(new OpenLayers.Layer.OSM());
 			this.zoomMapToCenter(this.options.startLon, this.options.startLat);
@@ -109,6 +110,11 @@
 				case 'report':
 					this.registerReportEvents();
 					this.geolocate();
+					break;
+
+				case 'report-details':
+					this.drawSingleMarker(this.options.startLon, this.options.startLat);
+					this.registerReportDetailsEvents();
 					break;
 
 				default:
@@ -151,7 +157,7 @@
 		},
 
 
-		drawMarkers: function(markers) {
+		drawMarkers: function(markers, color) {
 			var that = this;
 			that.newMarkersLayer();
 			that.newFeatures();
@@ -178,8 +184,10 @@
 
 				// set the html for the marker from type/color etc.
 				html = '<h2>' + this.bikeType + '</h2><p>Color: ' + this.color;
-				html += '<br />Date of Theft: ' + this.dateOfTheft;
-				html += '<br /><a href="index.php?action=reportDetails&reportID=' + this.reportID + '">Show Reportdetails</a>';
+				html += '<br />Noticed Theft: ' + this.noticedTheft;
+				// TODO images are not in the returned data-array yet
+				// html += '<img src="/3rdparty/timthumb/timthumb.php?src=' + this.image + '&w=150" alt="" />';
+				html += '<a href="index.php?action=reportDetails&reportID=' + this.reportID + '">Show Reportdetails</a>';
 
 				feature.data.popupContentHTML = html;
 				feature.data.overflow = "auto";
@@ -207,15 +215,15 @@
 
 
 		drawSingleMarker: function(lon, lat) {
-			if (this.reportMarker) {
-				this.reportMarker.destroy();
+			if (this.singleMarker) {
+				this.singleMarker.destroy();
 			}
-			this.reportMarker = new OpenLayers.Marker(
+			this.singleMarker = new OpenLayers.Marker(
 				new OpenLayers.LonLat(lon, lat).transform(
 					this.options.mapOptions.displayProjection, this.options.mapOptions.projection
 				)
 			);
-			this.markersLayer.addMarker(this.reportMarker);
+			this.markersLayer.addMarker(this.singleMarker);
 		},
 
 
@@ -229,7 +237,6 @@
 		// Basic event handling
 		//==========================================================================
 
-		// TODO this is not working yet
 		geolocate: function() {
 			var that = this;
 			var geo = new OpenLayers.Control.Geolocate({
@@ -243,7 +250,6 @@
 
 			that.map.addControl(geo);
 			geo.events.register("locationupdated", geo, function(e) {
-				// TODO in the future? set road city etc. see lookup
 				that.drawSingleMarker(e.position.coords.longitude, e.position.coords.latitude);
 				that.zoomMapToCenter(e.position.coords.longitude, e.position.coords.latitude);
 				that._reverseLonLatLookup(e.position.coords.longitude, e.position.coords.latitude);
@@ -261,6 +267,13 @@
 		registerExplorationEvents: function() {
 			this.map.events.register('moveend', this, this._eventMapMoveZoomEnd);
 			this.map.events.register('zomeend', this, this._eventMapMoveZoomEnd);
+		},
+
+		registerReportDetailsEvents: function() {
+			this.map.events.register('moveend', this, this._eventMapMoveZoomEnd);
+			this.map.events.register('zomeend', this, this._eventMapMoveZoomEnd);
+
+
 		},
 
 
@@ -288,7 +301,23 @@
 				'top': top,
 				'bottom': bottom
 			}, function(response) {
-				that.drawMarkers(response);
+				that.drawMarkers(response, 'red');
+			});
+
+		},
+
+
+		getHintsInArea: function(left, right, top, bottom) {
+			var that = this;
+
+			$.getJSON($.baseURL + 'index.php', {
+				'action': 'hintsInArea',
+				'left': left,
+				'right': right,
+				'top': top,
+				'bottom': bottom
+			}, function(response) {
+				that.drawMarkers(response, 'blue');
 			});
 
 		},
@@ -298,7 +327,6 @@
 		//==========================================================================
 
 		_eventMarkerMousedown: function(evt) {
-			var currentPopup; // TODO not needed?
 			if (this.feature.popup === null) {
 				this.feature.popup = this.feature.createPopup(this.feature.closeBox);
 				this.that.map.addPopup(this.feature.popup);
@@ -306,15 +334,20 @@
 			} else {
 				this.feature.popup.toggle();
 			}
-			currentPopup = this.feature.popup;
 			OpenLayers.Event.stop(evt);
 		},
 
 
 		_eventMapMoveZoomEnd: function(evt) {
 			var bounds = this.map.getExtent().transform(this.map.projection, this.map.displayProjection);
-			this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+			if (this.options.mapType === 'report') {
+				this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+			} else if (this.options.mapType === 'report-details') {
+				this.getHintsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
+			}
 		},
+
+
 
 
 		_eventMapClick: function(evt) {

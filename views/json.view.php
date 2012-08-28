@@ -1,7 +1,7 @@
 <?php
 require_once('views/baseExport.view.php');
 
-class ReportsInAreaView extends BaseExportView {
+class JsonView extends BaseExportView {
 
 	private $data;
 

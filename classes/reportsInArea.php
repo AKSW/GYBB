@@ -60,7 +60,7 @@ class ReportsInArea {
 		SELECT * WHERE {
 		?reportID geo:lon ?lon ;
 							geo:lat ?lat ;
-							gybbo:dateOfTheft ?dateOfTheft ;
+							gybbo:noticedTheft ?noticedTheft ;
 							gybbo:describesTheftOf ?bikeID .
 
 		?bikeID gybbo:bikeType ?bikeType ;

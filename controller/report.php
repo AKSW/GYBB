@@ -26,18 +26,6 @@ class ReportController {
 
 			$cleanData = $validator->getValidatedData();
 
-			foreach($cleanData as $key => $data)  {
-				if (is_array($data))  {
-					foreach ($data as $key) {
-						echo urlencode($key);
-					}
-
-
-				}
-
-
-			}
-
 			try {
 				$bikeImages = $filecheck->checkFileErrors();
 			} catch (Exception $e) {
@@ -53,13 +41,11 @@ class ReportController {
 				return new ReportView();
 			}
 
+		} else  {
+			return new ErrorView();
 		}
 
-		// TODO remove this?
-		return new HomeView();
-
 	}
-
 
 }
 

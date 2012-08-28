@@ -11,11 +11,12 @@ class ReportData {
 	public $lon;
 	public $lat;
 
-	public $dateOfTheft;
 	public $lastSeen;
 	public $noticedTheft;
+	public $circumstances;
 	public $registrationNumber;
 	public $policeStation;
+	public $findersFee;
 
 	public $bikeType;
 	public $color;
@@ -38,9 +39,8 @@ class ReportData {
 		*/
 	function initialize() {
 		$this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
-		$this->created = date_format(date_create(), 'Y-m-d');
+		$this->created = date('Y-m-d') . 'T' . date('H:i:s') . 'Z';
 		$this->user = User::getCurrentUser();
-
 	}
 
 

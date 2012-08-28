@@ -12,9 +12,8 @@ class Labels {
 		'city' => 'City',
 		'lon' => 'Longitude',
 		'lat' => 'Latitude',
-		'dateOfTheft' => 'Date of theft',
-		'lastSeen' => "Last seen at ... o'clock",
-		'noticedTheft' => "Noticed theft at ... o'clock",
+		'lastSeen' => "Last seen at",
+		'noticedTheft' => "Noticed theft at",
 		'bikeType' => 'Type of your bike',
 		'color' => 'Color',
 		'comment' => 'Description / more information',
@@ -23,7 +22,9 @@ class Labels {
 		'wheelSize' => 'Wheelsize in inch',
 		'frameNumber' => 'Framenumber',
 		'registrationCode' => 'Police registered number (if any)',
-		'policeStation' => 'Police station in charge'
+		'policeStation' => 'Police station in charge',
+		'circumstances' => 'How it happened',
+		'findersFee' => 'Finders fee'
 	);
 
 
