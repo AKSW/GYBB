@@ -33,7 +33,7 @@ class DeleteReportController {
 			$hints = $ch->getSparqlResults($pre . $hintQuery);
 			foreach ($hints as $hint) {
 				$qf->execSparql($pre . '
-					DELETE FROM <http://getyourbikeback.webgefrickel.de/> {
+					DELETE FROM <' . RESOURCE_GRAPH . '> {
 						<' . $hint->hintID->value . '> ?predicate ?object .
 					} WHERE {
 						<' . $hint->hintID->value . '> ?predicate ?object .
@@ -42,7 +42,7 @@ class DeleteReportController {
 			}
 
 			$qf->execSparql($pre . '
-			DELETE FROM <http://getyourbikeback.webgefrickel.de/> {
+			DELETE FROM <' . RESOURCE_GRAPH . '> {
 					gybb:' . $reportID . ' ?predicate ?object .
 				} WHERE {
 					gybb:' . $reportID . ' ?predicate ?object .
@@ -50,7 +50,7 @@ class DeleteReportController {
 			');
 
 			$qf->execSparql($pre . '
-			DELETE FROM <http://getyourbikeback.webgefrickel.de/> {
+			DELETE FROM <' . RESOURCE_GRAPH . '> {
 					gybb:' . $bikeID . ' ?predicate ?object .
 				} WHERE {
 					gybb:' . $bikeID . ' ?predicate ?object .
@@ -58,13 +58,9 @@ class DeleteReportController {
 			');
 
 			return new ReportDeletedView();
-
 		} else {
-
-      return new ErrorView();
+			return new ErrorView();
 		}
-
-	// TODO delete all bike parts as well?
 
 	}
 

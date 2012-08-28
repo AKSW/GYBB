@@ -7,8 +7,8 @@ require_once('classes/hints.php');
 class HomeController {
 
 	public function execute() {
-		$recently = new RecentlyStolen();
-		$stolen = $recently->getRecentlyStolenReports(3);
+		$recently = new RecentlyStolen(3);
+		$stolen = $recently->getRecentlyStolenReports();
 
 		foreach ($stolen as $key => $bike) {
 			$bi = new BikeImages($bike['bikeID'], 1);

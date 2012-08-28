@@ -9,10 +9,16 @@ require_once('classes/bike.php');
  **/
 class RecentlyStolen {
 
-	public function getRecentlyStolenReports($limit) {
+	private $limit;
+
+	function __construct($limit = false) {
+		$this->limit = $limit;
+	}
+
+	public function getRecentlyStolenReports() {
 		$curl = new CurlHelper();
 
-		$query = $this->buildSparqlQuery($limit);
+		$query = $this->buildSparqlQuery();
 		$allReports = $curl->getSparqlResults($query);
 
 		$recently = cleanupSparqlResults($allReports);
@@ -26,7 +32,7 @@ class RecentlyStolen {
 	}
 
 
-	function buildSparqlQuery($limit) {
+	function buildSparqlQuery() {
 		$sc = new SparqlConstants();
 
 		$query = $sc->fullPrefixList . '
@@ -34,10 +40,16 @@ class RecentlyStolen {
 				?reportID gybbo:noticedTheft ?noticedTheft ;
 									dct:created ?date ;
 									gybbo:city ?city ;
+									gybbo:postcode ?postcode ;
+									gybbo:state ?state ;
 									gybbo:describesTheftOf ?bikeID .
 				?bikeID gybbo:color ?color .
 
-			} ORDER BY DESC(?date) LIMIT ' . (int) $limit;
+		} ORDER BY DESC(?date)
+		';
+		if ($this->limit !== false) {
+			$query .= ' LIMIT ' . (int) $this->limit;
+		}
 
 		return $query;
 	}

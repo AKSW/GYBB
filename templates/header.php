@@ -19,6 +19,7 @@ if (isset($_GET['reportID'])) $reportID = $_GET['reportID'];
 					<li><a href="index.php?action=map">Explore</a></li>
 					<?php  // add nav items for logged-in users
 						if ($user = User::getCurrentUser()) { ?>
+					<li><a href="index.php?action=me">My reports/hints</a></li>
 					<li><a href="index.php?action=report">Add Report</a></li>
 					<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export<b class="caret"></b></a>
@@ -47,6 +48,9 @@ if (isset($_GET['reportID'])) $reportID = $_GET['reportID'];
 					</li>
 
 					<?php } ?>
+					<li>
+						<a href="http://aksw.org/">Wiki</a>
+					</li>
 					<li>
 						<a href="/index.php?action=help">Help</a>
 					</li>

@@ -18,6 +18,10 @@ class TestDataCreatorController {
 
 	public function execute() {
 
+		if (isset($_GET['numberOfReports'])) {
+			$this->reports = (int) $_GET['numberOfReports'];
+		}
+
 		for ($i = 0; $i < $this->reports; $i++) {
 			$cleanData = $this->createReportData();
 			$emptyfiles = array('bikeimages' => '');

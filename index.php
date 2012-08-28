@@ -20,11 +20,15 @@ class FrontController {
 		'suggestion' => 'controller/suggestion.php',
 		'bikeImages' => 'controller/bikeImages.php',
 		'addHint' => 'controller/addHint.php',
+		'me' => 'controller/me.php',
 		'hints' => 'controller/hints.php',
 		'help' => 'controller/help.php',
 		'export' => 'controller/export.php',
 		'deleteReport' => 'controller/deleteReport.php',
+		'updateReport' => 'controller/updateReport.php',
 		'search' => 'controller/search.php',
+		'reportList' => 'controller/reportList.php',
+		'hintList' => 'controller/hintList.php',
 		//cron controllers
 		'statistics' => 'controller/statistics.php',
 		'void'=> 'controller/void.php',
@@ -35,7 +39,7 @@ class FrontController {
 	// if a no logged in user tries to do an unsafe action specified
 	// here, he/she will be forwarded to an error-view
 	private $unsafeActions = array(
-		'export', 'deleteReport', 'report', 'statistics', 'void', 'testDataCreator'
+		'me', 'export', 'deleteReport', 'report', 'statistics', 'void', 'testDataCreator'
 	);
 
 

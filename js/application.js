@@ -199,13 +199,18 @@
 		},
 
 
-		drawMarkers: function(markers, showClosed, doNotRedraw) {
+		drawMarkers: function(markers, color, doNotRedraw) {
 			var that = this;
+			var image;
 			var size = new OpenLayers.Size(21, 25);
 			var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
 
 			// every time before we draw markers reset the bounds
-			// TODO?
+			if (color === 'red') {
+				image = 'marker.png';
+			} else if (color === 'blue') {
+				image = 'marker-blue.png';
+			}
 
 			// dont create the map and markers newly if doNotRedraw is set to true
 			if (doNotRedraw !== true) {
@@ -214,71 +219,49 @@
 
 			// draw each marker on the map
 			$.each(markers, function() {
+				var lonLat, feature, marker, combined, html;
 
-				// only add the marker and draw it if it is not 'closed'
-				// and showClosed === true
-				//
-				if (this.state !== 'closed' || (this.state === 'closed' && showClosed === true)) {
-					// check the color we want to draw depending on marker-type and status
-					var image;
-					if (this.type === 'report') {
-						// now let's see - what state is it in?
-						if (this.state === 'resolved') {
-							image = 'marker-gold.png';
-						} else if (this.state === 'closed') {
-							image = 'marker-green.png';
-						} else {
-							image = 'marker.png'; // default
-						}
-					} else if (this.type === 'hint') {
-						image = 'marker-blue.png';
-					}
+				lonLat = new OpenLayers.LonLat(
+					parseFloat(this.lon), parseFloat(this.lat)
+				);
+				lonLat.transform(
+					new OpenLayers.Projection("EPSG:4326"),
+					that.map.getProjectionObject()
+				);
 
-					var lonLat, feature, marker, combined, html;
-					console.log(this.type);
+				// add the marker-lonLat to the bounds
+				that.bounds.extend(lonLat);
 
-					lonLat = new OpenLayers.LonLat(
-						parseFloat(this.lon), parseFloat(this.lat)
-					);
-					lonLat.transform(
-						new OpenLayers.Projection("EPSG:4326"),
-						that.map.getProjectionObject()
-					);
+				// create a feature with the given html
+				feature = new OpenLayers.Feature(that.markersLayer, lonLat);
+				feature.closeBox = true;
 
-					// add the marker-lonLat to the bounds
-					that.bounds.extend(lonLat);
+				feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.Anchored, {
+					'autoSize': true
+				});
 
-					// create a feature with the given html
-					feature = new OpenLayers.Feature(that.markersLayer, lonLat);
-					feature.closeBox = true;
+				feature.data.popupContentHTML = this.html;
+				feature.data.overflow = "auto";
+				feature.data.icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
 
-					feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.Anchored, {
-						'autoSize': true
-					});
+				// create a marker from that feature, add click events and add it to the map
+				marker = feature.createMarker();
 
-					feature.data.popupContentHTML = this.html;
-					feature.data.overflow = "auto";
-					feature.data.icon = new OpenLayers.Icon($.baseURL + '3rdparty/openlayers/img/' + image, size, offset);
+				// we need a reference to this feature AND this plugin
+				combined = {
+					that: that,
+					feature: feature
+				};
+				marker.events.register("mousedown", combined, that._eventMarkerMousedown);
+				that.markersLayer.addMarker(marker);
 
-					// create a marker from that feature, add click events and add it to the map
-					marker = feature.createMarker();
+				// initialize the popup and hide it
+				feature.popup = feature.createPopup(feature.closeBox);
+				that.map.addPopup(feature.popup);
+				feature.popup.hide();
 
-					// we need a reference to this feature AND this plugin
-					combined = {
-						that: that,
-						feature: feature
-					};
-					marker.events.register("mousedown", combined, that._eventMarkerMousedown);
-					that.markersLayer.addMarker(marker);
-
-					// initialize the popup and hide it
-					feature.popup = feature.createPopup(feature.closeBox);
-					that.map.addPopup(feature.popup);
-					feature.popup.hide();
-
-					// add the created feature to the array of features
-					that.features.push(feature);
-				}
+				// add the created feature to the array of features
+				that.features.push(feature);
 			});
 
 		},
@@ -291,8 +274,6 @@
 				newMarker = {
 					lon: this.lon,
 					lat: this.lat,
-					type: 'report',
-					state: this.state,
 					html: '<h3>' + this.bikeType + '</h3><p>' +
 						'<strong>City:</strong><br /> ' + this.city + '<br />' +
 						'<strong>Color:</strong><br /> ' + this.color + '<br /><br />' +
@@ -301,7 +282,7 @@
 				markers.push(newMarker);
 			});
 
-			this.drawMarkers(markers, true);
+			this.drawMarkers(markers, 'red');
 		},
 
 
@@ -459,8 +440,6 @@
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
-						type: 'report',
-						state: this.state,
 						// set the html for the marker from type/color etc.
 						html: '<h3>' + this.bikeType + '</h3><p>' +
 							'<strong>Color:</strong><br /> ' + this.color + '<br />' +
@@ -470,7 +449,7 @@
 					};
 					markers.push(marker);
 				});
-				that.drawMarkers(markers, false, true);
+				that.drawMarkers(markers, 'red', true);
 				$('#finished').addClass('finished-reports');
 
 			});
@@ -486,7 +465,6 @@
 					hint = {
 						lon: this.lon,
 						lat: this.lat,
-						type: 'hint',
 						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
 							'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
 							'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
@@ -495,7 +473,7 @@
 					};
 					hints.push(hint);
 				});
-				that.drawMarkers(hints, false, true);
+				that.drawMarkers(hints, 'blue', true);
 				$('#finished').addClass('finished-hints');
 
 			});
@@ -516,7 +494,6 @@
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
-						type: 'hint',
 						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
 							'<strong>Time of observation:</strong><br /> ' + this.hintWhen + '<br />' +
 							'<strong>Hint given on:</strong><br /> ' + this.created + '<br />' +
@@ -525,7 +502,7 @@
 					};
 					markers.push(marker);
 				});
-				that.drawMarkers(markers);
+				that.drawMarkers(markers, 'blue');
 
 				// now if we have no singlehint set switch back to the first tab. boooo.
 				$('#report-details-view').find('.nav-tabs li').removeClass('active');
@@ -708,3 +685,270 @@
 	};
 }(jQuery, window, document));
 
+
+$(document).ready(function() {
+
+	// add the map to all map elements
+	if ($('.bikemap').length) {
+		var $bikemaps = $('.bikemap');
+		$bikemaps.each(function() {
+			var lon, lat, reportID;
+			var options = {};
+			var mapType = $(this).data('bikemaptype');
+
+			// set some options for the map depending on type
+			if (mapType === 'exploration') {
+				options = {
+					zoom: 4
+				};
+
+			} else if (mapType === 'searchresults') {
+				options = {
+					zoom: 4
+				};
+
+			} else if (mapType === 'report') {
+				options = {
+					zoom: 15
+				};
+
+			} else if (mapType === 'report-details') {
+				options = {
+					zoom: 15,
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+
+			} else if (mapType === 'add-hint') {
+				options = {
+					zoom: 15,
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+
+			} else if (mapType === 'hints') {
+				options = {
+					zoom: 15,
+					report: $(this).data('bikemapreportid'),
+					startLon: $(this).data('bikemaplon'),
+					startLat: $(this).data('bikemaplat')
+				};
+			}
+      // create the map with the options above
+			$(this).bikemap(options);
+		});
+	}
+
+	// print-button of report form
+	$('.btn-print').on('click', function(e) {
+		e.preventDefault();
+		window.print();
+	});
+
+	// Add Colorbox to every lightbox-link with click-enlarge
+	if ($('a.lightbox').length) {
+		$('a.lightbox').colorbox({
+			opacity: 0.8,
+			loop: false,
+			maxWidth: '90%',
+			maxHeight: '90%'
+		});
+	}
+
+	$('.table-sortable').tablesorter();
+
+
+	// load images for recently stolen bikes
+	if ($('.stolen-bike').length)  {
+		$('.stolen-bike').on('mouseenter', function(e)  {
+			$(this).find('.stolen-image').removeClass('hidden');
+		});
+		$('.stolen-bike').on('mouseleave', function(e)  {
+			$(this).find('.stolen-image').addClass('hidden');
+		});
+	}
+
+	if ($('#hint-form').length) {
+		$('#hint-form').hide();
+
+		$('.btn-hint').on('click', function(e) {
+			e.preventDefault();
+			$.colorbox({
+				inline: true,
+				href: '#hint-form',
+				width: 850,
+				height: 580,
+				onComplete: function() {
+					$('#colorbox #hint-form').show();
+				},
+				onClosed: function() {
+					$('#hint-form').hide();
+				}
+			});
+
+		});
+
+	}
+
+
+	// tab navigation in report form
+	$('#nav-report a').on('click', function(e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+
+
+	// REPORT form stuff
+	//================================================================================
+
+	// timepicker for the start/end fields in the report-form
+	$('#lastSeen, #noticedTheft, #hintWhen').datetimepicker({
+		firstDay: 1, // i dont like mondaaaaaaaays
+		showAnim: 'fade',
+		maxDate: '0d',
+		dateFormat: "dd.mm.yy",
+		timeFormat: "hh:mm",
+		stepMinute: 5
+	});
+
+	// autocompletion for some fields
+	if ($('.suggestion').length) {
+		$('.suggestion').each(function()  {
+			var id = $(this).attr('id');
+			// just take the firstpart before the dash
+			var splitted = id.split('-');
+			var type = splitted[0];
+
+			$(this).autocomplete({
+				source: 'index.php?action=suggestion&type=' + type
+			});
+		});
+	}
+
+
+	// image upload duplication
+	$('.btn-add-more-images').on('click', function(e) {
+		e.preventDefault();
+		duplicateUploadArea($(this));
+	});
+
+  // bike-parts duplication in report from
+	$('.btn-add-more-parts').on('click', function(e) {
+		e.preventDefault();
+		duplicateParts($(this));
+	});
+
+	// summary-update for report form, requiredFieldChecker
+	if ($('#view-report').length) {
+		$('#nav-report a[href="#summary"]').on('click', function(e) {
+			updateSummary();
+			checkRequiredReportFields();
+		});
+	}
+
+	if ($('.btn-home-boxes').length) {
+		$('.btn-home-boxes').on('click', function(e) {
+			e.preventDefault();
+			$('.sidebar .box').toggleClass('hidden');
+		});
+	}
+
+
+
+	//================================================================================
+	//================================================================================
+	//
+
+	function checkRequiredReportFields() {
+		$('#view-report input[required="required"]').each(function() {
+			var $input = $(this);
+			var trimmedVal = $.trim($input.val());
+			var parentID = $input.parents('.tab-pane').attr('id');
+			var $badge = $('#nav-report a[href="#' + parentID + '"]').find('.badge');
+			if (trimmedVal.length === 0) { // if the field has no useful value
+				$input.addClass('error');
+				$badge.addClass('badge-important');
+				$('#summary-' + $input.attr('id')).text('Please enter a correct value').addClass('alert');
+			} else {
+				$input.removeClass('error');
+				$badge.removeClass('badge-important').addClass('badge-success');
+				$('#summary-' + $input.attr('id')).removeClass('alert');
+			}
+		});
+	}
+
+	function updateSummary() {
+		$('.summary-components-container').html('');
+    var bikepartsHTML = '';
+		var imagesHTML = '';
+
+		$('#view-report input[type="text"], #view-report input[type="file"], #view-report textarea').each(function() {
+			var $input = $(this);
+			var summaryID = '#summary-' + $input.attr('id');
+
+			if ($input.attr('type') === 'file') {
+				if ($input.val().length) {
+					imagesHTML += $input.val() + ': ' + $input.val() + '<br />';
+				}
+
+			} else if ($input.attr('name') ==='comptype[]' || $input.attr('name') === 'compname[]') {
+
+				if ($input.attr('name') === 'comptype[]') {
+					var number = $input.parent().data('bikeparts-counter');
+					if ($input.val().length) {
+						bikepartsHTML += $input.val() + ': ' + $('#compname-' + number).val() + '<br />';
+					}
+				}
+			} else {
+				$(summaryID).text($input.val());
+			}
+		});
+
+		$('.summary-components-container').html(bikepartsHTML);
+		$('.summary-images-container').html(imagesHTML);
+
+	}
+
+	function duplicateUploadArea($button) {
+		var $uploadArea = $button.parent();
+		var $newUploadArea = $uploadArea.clone();
+		var counter = $uploadArea.data('upload-counter');
+
+		$newUploadArea.insertAfter($uploadArea);
+		// after inserting the new area remove the plus button
+		$button.remove();
+		counter += 1;
+
+		$newUploadArea.attr('data-upload-counter', counter);
+		$newUploadArea.find('label').attr('for', 'bikeimage-' + counter);
+		$newUploadArea.find('input').attr('id', 'bikeimage-' + counter).val('');
+		$newUploadArea.find('.counter').text(counter);
+		$newUploadArea.find('button').on('click', function(e) {
+			e.preventDefault();
+			duplicateUploadArea($(this));
+		});
+	}
+
+	function duplicateParts($button) {
+		var $partsArea = $button.parent();
+		var $newParts = $partsArea.clone();
+		var counter = $partsArea.data('bikeparts-counter');
+
+		$newParts.insertAfter($partsArea);
+		// after inserting the new area remove the plus button
+		$button.remove();
+		counter += 1;
+
+		$newParts.attr('data-bikeparts-counter', counter);
+		$newParts.find('label[for^="comptype"]').attr('for', 'comptype-' + counter);
+		$newParts.find('label[for^="compname"]').attr('for', 'compname-' + counter);
+		$newParts.find('input[id^="comptype"]').attr('id', 'comptype-' + counter).val('').focus();
+		$newParts.find('input[id^="compname"]').attr('id', 'compname-' + counter).val('');
+		$newParts.find('button').on('click', function(e) {
+			e.preventDefault();
+			duplicateParts($(this));
+		});
+	}
+
+
+});

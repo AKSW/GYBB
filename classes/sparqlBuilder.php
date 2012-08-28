@@ -37,7 +37,6 @@ function predicateUri($prefix, $value, $prefixObject, $valueObject) {
 	return $pred;
 }
 
-// TODO type with xsd:string always?!
 function predicateLiteral($prefix, $value, $literal) {
 	$pred = new PredicateBuilder();
 	$pred->predicate($prefix, $value);

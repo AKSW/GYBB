@@ -109,7 +109,7 @@ class ReportRepository extends QueryFactory {
 		if (!empty($reportData->circumstances)) $predicates[] = predicateLiteral(SparqlConstants::GYBBO, SparqlConstants::CIRCUMSTANCES, $reportData->circumstances);
 		if (!empty($reportData->findersFee)) $predicates[] = predicateLiteral(SparqlConstants::GYBBO, SparqlConstants::FINDERSFEE, $reportData->findersFee);
 
-		//state active or not active
+		// state is open by default
 		$predicates[] = typedLiteral(parent::GYBBO, parent::STATE, parent::STATE_OPEN, parent::XSD_STRING);
 
 

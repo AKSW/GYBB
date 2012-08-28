@@ -24,13 +24,12 @@ class ReportController {
 
 			$cleanData = $validator->getValidatedData();
 
-      echo '<pre>' . print_r($cleanData, 1) . '</pre>';
-      exit;
-
+			$bikeImages = array();
 			try {
 				$bikeImages = $filecheck->checkFileErrors();
 			} catch (Exception $e) {
-				echo $e;
+				// TODO do sth. with the error-message, but dont echo it
+				// echo $e;
 			}
 
 			$service = new ReportService();

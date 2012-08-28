@@ -7,8 +7,8 @@ require_once 'classes/sparq';
  * @author ju
  */
 class CubeService {
-	
-	
+
+
 	private $queryFactory;
 	private $curlHelper;
 
@@ -20,19 +20,19 @@ class CubeService {
 		$this->queryFactory = new QueryFactory();
 		$this->curlHelper = new CurlHelper();
 	}
-	
-	
-	
+
+
+
 	public function updateReportObservationsByDate() {
 		$rawResult = $this->curlHelper->getSparqlResults(CubeService::REPORTS_WITH_DATE, DATACUBE_GRAPH);
-		
+
 		print_r ($rawResult);
-		
-		
+
+
 	}
-	
-	
-	
+
+
+
 }
 
 ?>

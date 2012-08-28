@@ -85,7 +85,7 @@ class SearchController {
 	// php and dont create new sparql-queries no one would understand :-)
 	/*====================================================================*/
 	private function facetedSearchFilter($data) {
-		$allowedFields = array('city', 'type', 'color', 'manufacturer', 'wheelSize', 'findersFee');
+		$allowedFields = array('state', 'city', 'type', 'color', 'manufacturer', 'wheelSize', 'findersFee');
 		$searchFields = array();
 		$filteredData = array();
 		$searchVal = '';

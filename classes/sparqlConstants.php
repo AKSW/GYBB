@@ -20,7 +20,7 @@ class SparqlConstants {
 		'skos' => 'http://www.w3.org/2004/02/skos/core#',
 		'gybb' => 'http://getyourbikeback.webgefrickel.de/resource/',
 		'gybbo' => 'http://getyourbikeback.webgefrickel.de/ontology/',
-	    'gybbstat' => 'http://getyourbikeback.webgefrickel.de/datacube/' ,
+		'gybbstat' => 'http://getyourbikeback.webgefrickel.de/datacube/' ,
 		'geo' => 'http://www.w3.org/2003/01/geo/wgs84_pos#',
 		'virtrdf' => 'http://www.openlinksw.com/schemas/virtrdf#',
 		'void' => 'http://rdfs.org/ns/void#',
@@ -29,14 +29,14 @@ class SparqlConstants {
 
 
 	const GYBB = "gybb";
-    const GYBBSTAT = "gybbstat";
+	const GYBBSTAT = "gybbstat";
 	const DC = "dc";
 	const DCT = "dct";
 	const CREATOR = "creator";
 	const FOAF = 'foaf';
 	const MBOX = 'mbox';
 	const GEO = "geo";
-    const QB = "qb";
+	const QB = "qb";
 	const XSD = "xsd";
 	const XSD_DATE = "xsd:date";
 	const XSD_DATETIME = "xsd:dateTime";

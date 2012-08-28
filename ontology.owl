@@ -13,11 +13,11 @@
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix dcterms: <http://purl.org/dc/terms/>.
 @prefix qb: <http://purl.org/linked-data/cube#>.
+@prefix gybbstat: <http://getyourbikeback.webgefrickel.de/datacube/>.
 
 # our prefixes
 @prefix gybb: <http://getyourbikeback.webgefrickel.de/resource/>.
 @prefix gybbo: <http://getyourbikeback.webgefrickel.de/ontology/>.
-
 
 <http://getyourbikeback.webgefrickel.de/ontology.owl> rdf:type owl:Ontology .
 
@@ -30,55 +30,38 @@ gybbo:Bike
 	rdf:type owl:Class;
 	rdfs:subClassOf owl:Thing.
 
-gybbo:User
-	rdf:type owl:Class;
-	rdfs:subClassOf owl:Thing;
-	rdfs:subClassOf foaf:Person.
-
 gybbo:BikeFact
 	rdf:type owl:Class;	
 	rdfs:subClassOf owl:Thing.
 
-gybbo:BikePart
+gybbo:BikeType
 	rdf:type owl:Class;
-	rdfs:subClassOf gybbo:BikeFact;
-	rdfs:subClassOf owl:Thing.
-			
-gybbo:PoliceStation
+	rdfs:subClassOf gybbo:Bike.
+
+gybbo:Hint
 	rdf:type owl:Class;
 	rdfs:subClassOf owl:Thing.
 
-gybbo:Place
-	rdf:type owl:Class;
-	rdfs:subClassOf owl:Thing.
+			
 #Properties:
 # Alle Properties aus anderen Ontologien (foaf, dc, geo, etc.) werden nicht definiert (!)
 #zusaetzliche properties:
 # Report: dc:creator, dc:creationDate, geo:lat, geo:long, rdfs:comment
 
-gybbo:placeOf
+gybbo:road
 	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:PoliceStation;
-	rdfs:domain gybbo:Report;
-	rdfs:range gybbo:Place.
-
-gybbo:street
-	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Place.
+	rdfs:domain gybbo:Report.
 
 gybbo:house_number
 	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Place.
+	rdfs:domain gybbo:Report.
 
 gybbo:postcode
 	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Place.
+	rdfs:domain gybbo:Report.
 gybbo:city
 	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Place.
-gybbo:country
-	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Place.
+	rdfs:domain gybbo:Report.
 
 gybbo:bikeFactRelation
 	rdf:type owl:ObjectProperty;
@@ -88,8 +71,10 @@ gybbo:bikeFactRelation
 gybbo:lastSeen	
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report.
-
 gybbo:noticedTheft	
+	rdf:type owl:ObjectProperty;
+	rdfs:domain gybbo:Report.
+gybbo:circumstances
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report.
 
@@ -98,6 +83,9 @@ gybbo:state
 	rdfs:domain	gybbo:Report;
 	rdfs:range	xsd:string.
 
+gybbo:findersFee
+	rdf:type owl:ObjectProperty;
+	rdfs:domain	gybbo:Report.
 
 gybbo:color
 	rdf:type owl:ObjectProperty;
@@ -108,25 +96,34 @@ gybbo:wheelSize
 gybbo:manufacturer
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
-gybbo:description
-	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Bike.
 gybbo:frameNumber
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
 gybbo:price
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
-gybbo:registryCode
+gybbo:registrationCode
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Bike.
 
-gybbo:reportedTo
+gybbo:policeStation
 	rdf:type owl:ObjectProperty;
-	rdfs:domain gybbo:Report;
-	rdfs:range gybbo:PoliceStation.
+	rdfs:domain gybbo:Bike.
 
 gybbo:describesTheftOf
 	rdf:type owl:ObjectProperty;
 	rdfs:domain gybbo:Report;
 	rdfs:range gybbo:Bike.
+
+gybbo:hintFor
+	rdf:type owl:ObjectProperty;
+	rdfs:domain gybbo:Hint;
+	rdfs:range gybbo:Report.
+
+gybbo:hintWhen
+	rdf:type owl:ObjectProperty;
+	rdfs:domain gybbo:Hint.
+
+gybbo:hintWhat
+	rdf:type owl:ObjectProperty;
+	rdfs:domain gybbo:Hint.

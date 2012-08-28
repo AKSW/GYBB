@@ -45,7 +45,7 @@ class ReportDetailsView extends BaseView {
 	<div class="tab-content">
 		<div class="tab-pane" id="reportdetails">
 			<h2><?php echo $this->report['bikeType']; ?>, <?php echo $this->report['city']; ?> (Owner: <?php echo $this->report['creator']; ?>)</h2>
-			<h5>Report-ID: <?php echo $this->reportID; ?></h5>
+			<h5>State: <?php echo $this->report['state']; ?> | Report-ID: <?php echo $this->reportID; ?></h5>
 			<hr />
 
 
@@ -277,16 +277,34 @@ class ReportDetailsView extends BaseView {
 			if ($curUser && $this->report['mbox'] === $curUser->email &&
 					$this->report['creator'] === $curUser->name) { ?>
 		<div class="tab-pane" id="admin">
+
+			<h2>State of this report</h2>
+			<form action="/index.php" method="post" accept-charset="utf-8">
+				<input type="hidden" name="action" value="updateReport" />
+				<input type="hidden" name="reportID" value="<?php echo $this->reportID; ?>" />
+				<select name="state" id="state">
+					<option value="open">open</option>
+					<option value="resolved">resolved</option>
+					<option value="closed">closed</option>
+				</select>
+
+				<p><input type="submit" class="btn btn-primary" value="Change" /></p>
+			</form>
+
+			<hr />
+
+			<h2>DANGER ZONE!</h2>
 			<form action="/index.php" method="post" accept-charset="utf-8">
 				<input type="hidden" name="action" value="deleteReport" />
 				<input type="hidden" name="reportID" value="<?php echo $this->reportID; ?>" />
-
-				<h1>DANGER ZONE!</h1>
 				<p>
 					Click the button below to delete your report and all associated data and hints.
 				</p>
 
-				<p><input class="btn btn-large btn-danger" type="submit" value="Delete my report" /></p>
+				<p><input class="btn btn-danger" type="submit" value="Delete my report" /></p>
+				<p>
+					You can't undo this, so be careful.
+				</p>
 			</form>
 		</div>
 		<?php } ?>

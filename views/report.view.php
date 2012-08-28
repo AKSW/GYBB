@@ -121,7 +121,6 @@ class ReportView extends BaseView {
 
 			<div class="tab-pane" id="image-upload">
 				<fieldset class="well">
-					<!-- TODO make a beautiful form -->
 					<legend>Images of your bike</legend>
 					<p>
 						JPG-Images only, maxmimum file size: 1 MB. Click the plus-button to add more than one image.
@@ -209,7 +208,6 @@ class ReportView extends BaseView {
 				<div class="row-fluid">
 					<button class="btn btn-primary pull-right">Publish my report</button>
 					<button class="btn btn-print pull-right">Print this summary</button>
-					<!-- TODO <button class="btn">Publish and send to Facebook</button> -->
 				</div>
 
 			</div>

@@ -36,9 +36,8 @@ class FacebookController {
 				$user = new User($user_profile);
 				User::putUserInSession($user);
 
-				// same as in homecontroller -- auslagern TODO
-				$recently = new RecentlyStolen();
-				$stolen = $recently->getRecentlyStolenReports(3);
+				$recently = new RecentlyStolen(3);
+				$stolen = $recently->getRecentlyStolenReports();
 
 				foreach ($stolen as $key => $bike) {
 					$bi = new BikeImages($bike['bikeID'], 1);

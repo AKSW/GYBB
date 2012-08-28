@@ -70,8 +70,6 @@ class ReportDetails {
 	function buildBikePartsQuery() {
 		$sc = new SparqlConstants();
 		$sparql = $sc->fullPrefixList;
-		// TODO split this up and use two graphs (ontology + resource)
-		// see curlhelper todo in line 13
 		$sparql .= '
 			SELECT ?type ?name WHERE {
 				<' . $sc->allPrefixes['gybb'] . $this->bikeID . '> ?parttype ?partname .

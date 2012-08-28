@@ -5,22 +5,14 @@ require_once('classes/curlHelper.php');
 /**
  *
  **/
-class ReportsInArea {
+class ReportsByUser {
 
 	private $left;
 	private $right;
 	private $top;
 	private $bottom;
 
-	function __construct($left, $right, $top, $bottom) {
-		$this->left = (float) $left;
-		$this->right = (float) $right;
-		$this->top = (float) $top;
-		$this->bottom = (float) $bottom;
-	}
-
-
-	public function getReportsInArea() {
+	public function getReports() {
 		$finalResults = array();
 		$constants = new SparqlConstants();
 		$curl = new CurlHelper();
@@ -61,18 +53,24 @@ class ReportsInArea {
 	function buildSparqlQuery() {
 		$sc = new SparqlConstants();
 
+		$currentUser = User::getCurrentUser();
+		$name = $currentUser->name;
+		$email = $currentUser->email;
+
 		$query = $sc->fullPrefixList . '
 		SELECT * WHERE {
 		?reportID geo:lon ?lon ;
 							geo:lat ?lat ;
 							gybbo:state ?state ;
+							dc:creator "' . $name . '"^^xsd:string ;
+							foaf:mbox "' . $email . '"^^xsd:string ;
 							gybbo:noticedTheft ?noticedTheft ;
+							dct:created ?date ;
+							gybbo:city ?city ;
+							gybbo:postcode ?postcode ;
 							gybbo:describesTheftOf ?bikeID .
 
 		?bikeID gybbo:color ?color .
-
-		FILTER (?lon > ' . $this->left . ' && ?lon < ' . $this->right . ' &&
-						?lat > ' . $this->bottom . ' && ?lat < ' . $this->top . ')
 		}
 		';
 

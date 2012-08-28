@@ -25,7 +25,7 @@ class HomeView extends BaseView {
 	<div class="bikemap bikemap-home" data-bikemaptype="exploration"></div>
 
 	<section class="sidebar sidebar-main">
-		<article class="recently-stolen box">
+		<article class="recently-stolen box clearfix">
 			<h2>Recently stolen</h2>
 			<ol>
 			<?php
@@ -46,9 +46,12 @@ class HomeView extends BaseView {
 				}
 				?>
 			</ol>
+			<p class="alignright">
+				<a href="/index.php?action=reportList">» All Reports</a>
+			</p>
 		</article>
 
-		<article class="newest-hints box">
+		<article class="newest-hints box clearfix">
 			<h2>Newest Hints</h2>
 			<ol>
 			<?php
@@ -64,35 +67,32 @@ class HomeView extends BaseView {
 				}
 				?>
 			</ol>
+			<p class="alignright">
+				<a href="/index.php?action=hintList">» All Hints</a>
+			</p>
 		</article>
 	</section>
 
 	<section class="sidebar sidebar-second">
-		<nav class="nav-other box">
-			<h3>More</h3>
-			<ul>
-				<li><a href="index.php?action=faq">FAQ</a></li>
-				<li><a href="index.php?action=about">About</a></li>
-				<li><a href="index.php?action=project">Project</a></li>
-			</ul>
-		</nav>
-
-		<article class="stats box">
+		<article class="stats box clearfix">
 			<h3>Stats</h3>
 			<table>
 				<tr>
 					<td>Bikes returned</td>
-					<td>4</td>
+					<td>1</td>
 				</tr>
 				<tr>
 					<td>Bikes stolen</td>
-					<td>897234</td>
+					<td>1</td>
 				</tr>
 				<tr>
 					<td>Hints given</td>
-					<td>73</td>
+					<td>1</td>
 				</tr>
 			</table>
+			<p class="alignright">
+				<a href="/index.php?action=statistics">» More</a>
+			</p>
 		</article>
 	</section>
 

@@ -20,6 +20,7 @@ class SearchView extends BaseView {
 			<input type="hidden" name="action" value="search" />
 			<input type="hidden" name="search" value="<?php echo $_GET['search']; ?>" />
 
+			<?php facetSearchHelper('state', 'State', $this->results); ?>
 			<?php facetSearchHelper('city', 'City', $this->results); ?>
 			<?php facetSearchHelper('type', 'Biketype', $this->results); ?>
 			<?php facetSearchHelper('color', 'Color', $this->results); ?>
