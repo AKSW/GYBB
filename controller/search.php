@@ -68,12 +68,54 @@ class SearchController {
 				}
 			}
 		}
+
+    $searchData = $this->facetedSearchFilter($searchData);
+
 		if ($this->isAjax()) {
 			return new JsonView($searchData);
 		} else {
 			return new SearchView($searchData);
 		}
 
+	}
+
+
+	// this is not optimal but the faster way:
+	// filter the search-results with faceted attributes in pure
+	// php and dont create new sparql-queries no one would understand :-)
+	/*====================================================================*/
+	private function facetedSearchFilter($data) {
+		$allowedFields = array('city', 'type', 'color', 'manufacturer', 'wheelSize', 'findersFee');
+		$searchFields = array();
+		$filteredData = array();
+		$searchVal = '';
+		foreach ($allowedFields as $field) {
+			$searchVal = 'search-' . $field;
+			if (isset($_GET[$searchVal]) && !empty($_GET[$searchVal])) {
+				$searchFields[] = $field;
+			}
+		}
+
+		// now we have all search-fields and values -- let's
+		// cycle through all results and filter them
+		foreach ($data as $result) {
+			$allInThere = array();
+			foreach ($searchFields as $field) {
+				// it's a nice result if the field is there and equal to the checkboxs value
+				if (isset($result[$field]) && $result[$field] === $_GET['search-' . $field]) {
+					$allInThere[] = true;
+				} else {
+					$allInThere[] = false;
+				}
+			}
+
+			// if every filter-var is true, we have a result
+			if (!in_array(false, $allInThere)) {
+				$filteredData[] = $result;
+			}
+		}
+
+		return $filteredData;
 	}
 
 

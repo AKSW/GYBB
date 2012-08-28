@@ -2,7 +2,7 @@
 require_once('views/error.view.php');
 require_once('config/config.php');
 
-class StatisticsController {
+class VoidController {
 
 	public function execute() {
 		// TODO use get or post?
@@ -16,21 +16,14 @@ class StatisticsController {
 			return new ErrorView();
 		}
 
-		$view;	
-		try {
-			$statisticsService = new StatisticsService();
-			$statisticsService->updateStatistics();
+		// We are sane
+		// Are we? Yes we are!
+		$voidService = new VoidService();
+		$voidService->updateVoid();
 		
-			require_once('views/empty.view.php');
-			$view =  new EmptyView();
-		} catch (Exception $e) {
-			$view = new ErrorView();
-			$view->exception = $e;
-			
-			
-		}
-		return $view;
 		
+		require_once('views/empty.view.php');
+		return new EmptyView();
 		
 
 	}

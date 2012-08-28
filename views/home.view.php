@@ -32,7 +32,7 @@ class HomeView extends BaseView {
 				if (is_array($this->recentlyStolen) && !empty($this->recentlyStolen))  {
 					foreach ($this->recentlyStolen as $singleStolen) { ?>
 						<li id="<?php echo $singleStolen['bikeID']; ?>" class="stolen-bike">
-							<a href="<?php echo BASE_URL ?>index.php?action=reportDetails&amp;reportID=<?php echo $singleStolen['reportID']; ?>">
+							<a href="<?php echo WEB_BASE_URL ?>index.php?action=reportDetails&amp;reportID=<?php echo $singleStolen['reportID']; ?>">
 							<?php echo readableDateTime($singleStolen['noticedTheft']) . ', ' . $singleStolen['city'] . ' - ' . $singleStolen['bikeType']; ?>
 							</a>
 							<?php if (isset($singleStolen['image'])) { ?>
@@ -55,7 +55,7 @@ class HomeView extends BaseView {
 				if (is_array($this->hints) && !empty($this->hints))  {
 					foreach ($this->hints as $hint) { ?>
 						<li id="<?php echo $hint['hintID']; ?>">
-							<a href="<?php echo BASE_URL ?>index.php?action=reportDetails&amp;reportID=<?php echo $hint['reportID']; ?>&amp;showHints=true">
+							<a href="<?php echo WEB_BASE_URL ?>index.php?action=reportDetails&amp;reportID=<?php echo $hint['reportID']; ?>&amp;showHints=true">
 							<?php echo readableDateTime($hint['hintWhen']) . '<br /> ' . $hint['hintWhat']; ?>
 							</a>
 						</li>

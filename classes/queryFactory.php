@@ -43,7 +43,7 @@ class QueryFactory extends SparqlConstants {
 
 		// build Virtuoso/PL query
 		$virtuosoPl = 'SPARQL ' . $sparqlQuery;
-		$resultId = @odbc_exec($this->connection, $virtuosoPl);
+		$resultId = odbc_exec($this->connection, $virtuosoPl);
 
 		if (false === $resultId) {
 			$message = sprintf('SPARQL Error: %s in query: %s', $this->getLastError(), htmlentities($sparqlQuery));

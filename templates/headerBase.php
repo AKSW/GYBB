@@ -3,7 +3,7 @@
 <head>
 	<title>getyourbikeback</title>
 	<meta charset="UTF-8" />
-	<base href="<?php echo BASE_URL; ?>" />
+	<base href="<?php echo WEB_BASE_URL; ?>" />
 
 	<?php if (DEBUG === true) : ?>
 
@@ -26,7 +26,7 @@
 	<script src="3rdparty/openlayers/OpenLayers-2.12rc7.js"></script>
 
 	<script type="text/javascript">
-			jQuery.baseURL = "<?php echo BASE_URL; ?>";
+			jQuery.baseURL = "<?php echo WEB_BASE_URL; ?>";
 	</script>
 	<script src="js/jquery.bikemap.js"></script>
 	<script src="js/main.js"></script>

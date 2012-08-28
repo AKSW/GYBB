@@ -19,6 +19,10 @@ table {
 	margin: 20px 0;
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+	margin-right: 7px;
+}
 
 /*=============== layout ===============*/
 #header {
@@ -153,6 +157,16 @@ div.olMap.bikemap-add-hint {
 
 .table-report-details td:first-child {
 	width: 45%;
+}
+
+.faceted-group {
+	margin-top: 1.4em;
+	line-height: 1;
+}
+
+.faceted-group label {
+	line-height: 1;
+	margin-bottom: 0;
 }
 
 #hint-form {

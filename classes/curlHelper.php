@@ -12,6 +12,8 @@ class CurlHelper {
 		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql';
 		// TODO now we use every single graph -- dont do this -- use $graph value
 		// ?default-graph-uri=' . urlencode($graph);
+		// idea: execute query for every single graph X times and merge
+		// results afterwards -- wont work for combined statements?
 		$format = '&format=' . urlencode('application/sparql-results+json');
 		$params = '&timeout=0';
 
@@ -34,6 +36,7 @@ class CurlHelper {
     $response = '';
 		$format = '';
 
+		// TODO see above -- multiple graphs ftw?!
 		$url = BASE_ENDPOINT_URL . ':' . BASE_ENDPOINT_PORT . '/sparql?default-graph-uri=' . urlencode(RESOURCE_GRAPH);
 		$params = '&timeout=0';
 
@@ -54,7 +57,6 @@ class CurlHelper {
 				$format = '';
 				break;
 		}
-
 
 		$requestString =  $url . '&query=' . urlencode($sparqlQuery) . $format . $params;
 

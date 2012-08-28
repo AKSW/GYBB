@@ -1,0 +1,67 @@
+#predefined vocabulary
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix dbp: <http://dbpedia.org/resource/>.
+@prefix dbpedia2: <http://dbpedia.org/property/>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix qb: <http://purl.org/linked-data/cube#>.
+@prefix sdmx:    <http://purl.org/linked-data/sdmx#> .
+@prefix sdmx-concept:    <http://purl.org/linked-data/sdmx/2009/concept#> .
+@prefix sdmx-dimension:  <http://purl.org/linked-data/sdmx/2009/dimension#> .
+@prefix sdmx-attribute:  <http://purl.org/linked-data/sdmx/2009/attribute#> .
+@prefix sdmx-measure:    <http://purl.org/linked-data/sdmx/2009/measure#> .
+@prefix sdmx-metadata:   <http://purl.org/linked-data/sdmx/2009/metadata#> .
+@prefix sdmx-code:       <http://purl.org/linked-data/sdmx/2009/code#> .
+@prefix sdmx-subject:    <http://purl.org/linked-data/sdmx/2009/subject#> .
+@prefix gybbstat: <http://getyourbikeback.webgefrickel.de/datacube/> .
+
+
+gybbstat:reportsDef 
+	rdf:type owl:Class;
+	rdfs:subClassOf qb:DataStructureDefinition;
+  rdfs:comment "new reports per day"@en;
+  qb:component [
+		qb:dimension gybbstat:refPeriod; qb:order 1];
+  qb:component [
+		qb:measure  gybbstat:count 
+	] .
+
+gybbstat:hintsDef 
+	rdf:type owl:Class;
+	rdfs:subClassOf qb:DataStructureDefinition;
+  rdfs:comment "hints per day"@en;
+  qb:component [
+		qb:dimension gybbstat:refPeriod; qb:order 1];
+  qb:component [
+		qb:measure  gybbstat:count 
+	] .
+
+
+gybbstat:count   rdf:type rdf:Property, qb:MeasureProperty;
+      rdfs:label "A count of entities"@en;
+      rdfs:subPropertyOf sdmx-measure:obsValue;
+      rdfs:range xsd:decimal .
+
+gybbstat:refPeriod  rdf:type rdf:Property, qb:DimensionProperty;
+      rdfs:label "reference period"@en;
+      rdfs:subPropertyOf sdmx-dimension:refPeriod;
+      rdfs:range xsd:date;
+      qb:concept sdmx-concept:refPeriod .
+
+gybbstat:dayRange rdf:type rdf:Property;
+	rdfs:label "Number of days in the dataset";	
+	rdfs:range xsd:integer.
+
+#dataset definitions:
+gybbstat:dataset rdf:type qb:DataSet;
+	qb:structure gybbstat:reportsDef .
+
+

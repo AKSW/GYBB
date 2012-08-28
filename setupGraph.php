@@ -3,6 +3,16 @@ require_once('classes/autoloader.php');
 require_once('config/config.php');
 require_once('classes/utils.php');
 require_once('templates/headerBase.php');
+
+function readTTL($file) {
+	// reading the ontology
+	$fh = fopen($file, "r");
+	$ontology = fread($fh, 512 * 1024);//max 500K initial owl
+	fclose($fh);
+	return $ontology;
+}
+
+
 ?>
 
 <html>
@@ -31,6 +41,7 @@ require_once('templates/headerBase.php');
 <?php
 	ini_set("display_errors", "stdout");
 	$qf = new QueryFactory();
+	$qf->execSparql("DROP  SILENT  GRAPH <" . BASE_URL . ">" );
 	$qf->execSparql("DROP  SILENT  GRAPH <" . RESOURCE_GRAPH . ">" );
 	$qf->execSparql("DROP  SILENT  GRAPH <" . ONTOLOGY_GRAPH . ">" );
 	$qf->execSparql("DROP  SILENT  GRAPH <" . DATACUBE_GRAPH . ">" );
@@ -44,10 +55,7 @@ require_once('templates/headerBase.php');
 	<li>Created Ontology-Graph... </li>
 
 <?php
-  // reading the ontology
-	$fh = fopen('ontology.owl', "r");
-	$ontology = fread($fh, 512 * 1024);//max 500K initial owl
-	fclose($fh);
+	$ontology = readTTL('ontology.owl');
 ?>
 	<li>Read owl.. </li>
 
@@ -57,10 +65,9 @@ require_once('templates/headerBase.php');
 	<li>Saved ontology..</li>
 
 <?php
-	// reading the void ontoloy
-	$fh = fopen('void.owl', "r");
-	$void = fread($fh, 512 * 1024); //max 500K initial owl
-	fclose($fh);
+	// reading the void ontoloy	
+	$void = readTTL('void.owl');
+	
 ?>
 	<li>Read void owl.. </li>
 
@@ -68,6 +75,14 @@ require_once('templates/headerBase.php');
 	$qf->ttl($void, VOID_GRAPH);
 ?>
 	<li>Saved void ontology..</li>
+<?php
+	$cube = readTTL('cube.owl');
+?>
+		<li>Read cube owl.. </li>
+<?php
+	$qf->ttl($cube, DATACUBE_GRAPH);
+?>
+	<li>Saved datacube ontology..</li>
 
 	<li>Setup done!</li>
 </ol>

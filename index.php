@@ -1,4 +1,5 @@
 <?php
+
 require_once('classes/autoloader.php');
 require_once('classes/user.php');
 
@@ -21,10 +22,13 @@ class FrontController {
 		'bikeImages' => 'controller/bikeImages.php',
 		'addHint' => 'controller/addHint.php',
 		'hints' => 'controller/hints.php',
-		'statistics' => 'controller/statistics.php',
+		
 		'export' => 'controller/export.php',
 		'deleteReport' => 'controller/deleteReport.php',
 		'search' => 'controller/search.php',
+		//cron controllers
+		'statistics' => 'controller/statistics.php',
+		'void'=> 'controller/void.php',
 	);
 
 

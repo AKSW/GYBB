@@ -7,7 +7,7 @@ define('DEBUG', true);
 // NOTE if you change your baseurl you should change the RESOURCE_GRAPH and
 // other graph values and some prefixes in the classes/sparqlConstants.php too
 define('BASE_URL', 'http://getyourbikeback.webgefrickel.de/');
-
+define('WEB_BASE_URL', 'http://getyourbikeback.webgefrickel.de/');
 // where all the RDF goes
 define('RESOURCE_GRAPH', 'http://getyourbikeback.webgefrickel.de/resource/');
 define('ONTOLOGY_GRAPH', 'http://getyourbikeback.webgefrickel.de/ontology/');
@@ -39,4 +39,7 @@ define('UPLOAD_FOLDER', '/var/www/getyourbikeback/web/uploads/'); // absolute se
 // security token for curl cronjobs, add the following parameter as token
 // to run the action=statistics command.
 define('CRON_JOB_TOKEN', 'z2lIM45Yrs');
+
+//number of days for statistical datasets
+define('STATISTICS_HISTORY_DAYS', 180);
 ?>

@@ -38,7 +38,7 @@ class FacebookController {
 
 				// same as in homecontroller -- auslagern TODO
 				$recently = new RecentlyStolen();
-				$stolen = $recently->getRecentlyStolenReports();
+				$stolen = $recently->getRecentlyStolenReports(3);
 
 				foreach ($stolen as $key => $bike) {
 					$bi = new BikeImages($bike['bikeID'], 1);
@@ -48,7 +48,7 @@ class FacebookController {
 					}
 				}
 
-				$hints = new Hints(false, 5);
+				$hints = new Hints(false, 3);
 				$hintList = $hints->getHints();
 
 				return new HomeView($stolen, $hintList);

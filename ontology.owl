@@ -12,10 +12,12 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix qb: <http://purl.org/linked-data/cube#>.
 
 # our prefixes
 @prefix gybb: <http://getyourbikeback.webgefrickel.de/resource/>.
 @prefix gybbo: <http://getyourbikeback.webgefrickel.de/ontology/>.
+
 
 <http://getyourbikeback.webgefrickel.de/ontology.owl> rdf:type owl:Ontology .
 

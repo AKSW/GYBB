@@ -11,8 +11,12 @@
  *
  * <div id="bikemap" data-bikemaptype="exploration"></div>
  *
- * jshint global OpenLayers: true
  */
+
+/*global OpenLayers:true*/
+/*global searchResults:true*/
+/*global console:true*/
+
 ;(function($, window, document, undefined) {
 
 	// set your default options
@@ -40,7 +44,7 @@
 			minResolution: "auto",
 			minExtent: new OpenLayers.Bounds(-1, -1, 1, 1),
 			numZoomLevels: 19,
-			units: 'm',
+			units: 'm'
 		}
 	};
 
@@ -134,6 +138,7 @@
 					break;
 
 				case 'searchresults':
+					this.activateFacetedSearch();
 					this.drawSearchMarkers(searchResults);
 					break;
 
@@ -246,15 +251,45 @@
 				newMarker = {
 					lon: this.lon,
 					lat: this.lat,
-					html: '<h3>' + this.bikeType + '</h3><p>'
-							+ '<strong>City:</strong> ' + this.city + '<br />'
-							+ '<strong>Color:</strong> ' + this.color + '<br />'
-							+ '<a href="index.php?action=reportDetails&amp;reportID=' + key + '">Show Reportdetails</a>'
+					html: '<h3>' + this.bikeType + '</h3><p>' +
+						'<strong>City:</strong> ' + this.city + '<br />' +
+						'<strong>Color:</strong> ' + this.color + '<br />' +
+						'<a href="index.php?action=reportDetails&amp;reportID=' + key + '">Show Reportdetails</a>'
 				};
 				markers.push(newMarker);
 			});
 
 			this.drawMarkers(markers, 'red');
+		},
+
+
+		activateFacetedSearch: function() {
+			var that = this;
+			// only do sth if there is the faceted-serach form and at least one checkbox
+			var $searchForm = $('#faceted-search');
+			var $checkBoxes = $searchForm.find('input[type="checkbox"]');
+			if ($searchForm.length && $checkBoxes.length) {
+				$checkBoxes.on('click', function(e) {
+					$searchForm.submit();
+				});
+				// and activate the more-link
+				$('.show-more-factet-options').on('click', function(e) {
+					e.preventDefault();
+					var $link = $(this);
+					if ($link.text() === 'More...') {
+						$link.parent().find('.hidden')
+							.toggleClass('hidden')
+							.toggleClass('hidemeagain');
+						$link.text('Less...');
+					} else {
+						$link.parent().find('.hidemeagain')
+							.toggleClass('hidden')
+							.toggleClass('hidemeagain');
+						$link.text('More...');
+					}
+				});
+			}
+
 		},
 
 
@@ -375,12 +410,12 @@
 						// set the html for the marker from type/color etc.
 						// TODO images are not in the returned data-array yet
 						// html += '<img src="/3rdparty/timthumb/timthumb.php?src=' + this.image + '&w=150" alt="" />';
-						html: '<h3>' + this.bikeType + '</h3><p>'
-								+ '<strong>Color:</strong> ' + this.color + '<br />'
-								+ '<strong>Noticed Theft:</strong> ' + this.noticedTheft + '<br />'
-								+ '<a href="index.php?action=reportDetails&reportID='
-								+ this.reportID + '">Show Reportdetails</a>'
-					}
+						html: '<h3>' + this.bikeType + '</h3><p>' +
+							'<strong>Color:</strong> ' + this.color + '<br />' +
+							'<strong>Noticed Theft:</strong> ' + this.noticedTheft +
+							'<br />' + '<a href="index.php?action=reportDetails&reportID=' +
+							this.reportID + '">Show Reportdetails</a>'
+					};
 					markers.push(marker);
 				});
 				that.drawMarkers(markers, 'red');
@@ -402,11 +437,11 @@
 					marker = {
 						lon: this.lon,
 						lat: this.lat,
-						html: '<h3>Hint by ' + this.hintUser + '</h3><p>'
-								+ '<strong>Time of observation:</strong> ' + this.hintWhen + '<br />'
-								+ '<strong>Hint given on:</strong> ' + this.created + '<br />'
-								+ this.hintWhat + '</p>'
-					}
+						html: '<h3>Hint by ' + this.hintUser + '</h3><p>' +
+							'<strong>Time of observation:</strong> ' + this.hintWhen + '<br />' +
+							'<strong>Hint given on:</strong> ' + this.created + '<br />' +
+							this.hintWhat + '</p>'
+					};
 					markers.push(marker);
 				});
 				that.drawMarkers(markers, 'blue');
@@ -492,8 +527,8 @@
 		_reverseLonLatLookup: function(lon, lat) {
 			var that = this;
 			$.getJSON(
-				'http://nominatim.openstreetmap.org/reverse?format=json&lat='
-				+ lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
+				'http://nominatim.openstreetmap.org/reverse?format=json&lat=' +
+				lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
 				function(place) {
 					that._setAddressValues(place);
 				}
