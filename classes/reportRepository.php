@@ -25,12 +25,12 @@ class ReportRepository extends QueryFactory {
 		//haben .. sollte aber passen
 	}
 
-	public function saveReport($report) {
+	public function saveReport($report, $bikeImages) {
 		//TODO triplify/merge place
 		//TODO truplify/merge policeStation
 		//Triplify Bike
 		$sparqlBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
-		$builder = $this->triplifyBike($report, $sparqlBuilder);
+		$builder = $this->triplifyBike($report, $bikeImages, $sparqlBuilder);
 		$this->execSparql($builder->toSparql());
 
 		//Triplify Report
@@ -39,8 +39,7 @@ class ReportRepository extends QueryFactory {
 		$this->execSparql($builder->toSparql());
 	}
 
-	private function triplifyBike($bikeData, $to) {
-
+	private function triplifyBike($bikeData, $bikeImages, $to) {
 		$to->subject(SparqlBuilder::GYBB, $bikeData->getUniqueBikeID());
 
 		$predicates = array();
@@ -58,8 +57,17 @@ class ReportRepository extends QueryFactory {
 		if (!empty($bikeData->frameNumber)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::FRAMENUMBER, $bikeData->frameNumber);
 		if (!empty($bikeData->registrationCode)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::REGISTRYCODE, $bikeData->registrationCode);
 		if (!empty($bikeData->policeStation)) $predicates[] = predicateLiteral(SparqlBuilder::GYBBO, SparqlBuilder::REPORTEDTO, $bikeData->policeStation);
-		if (!empty($bikeData->price)) $predicates[] = typedLiteral(SparqlBuilder::GYBB, SparqlBuilder::PRICE, $bikeData->price, SparqlBuilder::XSD_INT);
-		if (!empty($bikeData->wheelSize)) $predicates[] = typedLiteral(SparqlBuilder::GYBB, SparqlBuilder::WHEELSIZE, $bikeData->wheelSize, SparqlBuilder::XSD_INT);
+		if (!empty($bikeData->price)) $predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::PRICE, $bikeData->price, SparqlBuilder::XSD_INT);
+		if (!empty($bikeData->wheelSize)) $predicates[] = typedLiteral(SparqlBuilder::GYBBO, SparqlBuilder::WHEELSIZE, $bikeData->wheelSize, SparqlBuilder::XSD_INT);
+
+    // TODO this is just a test thats adds the same image to every bike
+		if (is_array($bikeImages) && !empty($bikeImages)) {
+			foreach ($bikeImages as $image) {
+				if (substr($image, -4) === '.jpg') {
+					$predicates[] = predicateLiteral(SparqlBuilder::FOAF, SparqlBuilder::DEPICTION, BASE_URL . 'uploads/' . $image);
+				}
+			}
+		}
 
 		$to->predicates($predicates);
 

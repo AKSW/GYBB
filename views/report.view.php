@@ -1,16 +1,15 @@
 <?php
-require_once "views/base.view.php";
+require_once('classes/utils.php');
+require_once('views/base.view.php');
 
-	class ReportView extends BaseView {
+class ReportView extends BaseView {
 
+  protected function doShow() {
 
-		protected function doShow() {
-
-//TODO: get post parameter benoetigt?
 ?>
 
 <div class="row-fluid" id="view-report">
-	<form method="post" action="index.php?action=report">
+	<form method="post" action="index.php" enctype="multipart/form-data">
 		<input type="hidden" name="action" value="report" />
 
 		<ul class="nav nav-tabs" id="nav-report">
@@ -40,38 +39,22 @@ require_once "views/base.view.php";
 				<fieldset class="well">
 					<legend>Place of theft</legend>
 					<p>
-						Set Marker per Click on the map or insert address an choose from suggestions
+						Set Marker per Click on the map or insert address and/or choose from suggestions below:
 					</p>
 					<div class="row-fluid">
 						<ul class="span4">
-							<li>
-								<label for="road">road</label>
-								<input type="text" id="road" name="road" />
-							</li>
-							<li>
-								<label for="housenumber">housenumber</label>
-								<input type="text" id="house_number" name="house_number" />
-							</li>
-							<li>
-								<label for="postcode">zip code</label>
-								<input type="text" id="postcode"	name="postcode" />
-							</li>
-							<li>
-								<label for="city">city</label>
-								<input type="text" id="city" name="city" />
-							</li>
-							<li>
-								<label for="lon">Longitude</label>
-								<input type="text" id="lon" name="lon" required="required" />
-							</li>
-							<li>
-								<label for="lat">Latitude</label>
-								<input type="text" id="lat" name="lat" required="required" />
-							</li>
+						<?php
+							inputHelper('road', 'li', 'The street where your bike was stolen');
+							inputHelper('house_number', 'li', 'Housenumber nearby');
+							inputHelper('postcode', 'li');
+							inputHelper('city', 'li');
+							inputHelper('lon', 'li', '', true);
+							inputHelper('lat', 'li', '', true);
+						?>
 						</ul>
 
 						<div class="span8">
-							<div class="bikemap bikemap-report" data-bikemaptype="report" data-bikemapzoom="16"></div>
+							<div class="bikemap bikemap-report" data-bikemaptype="report"></div>
 							<button class="btn btn-findme">Center on my location</button>
 						</div>
 
@@ -85,24 +68,17 @@ require_once "views/base.view.php";
 			</div>
 
 			<div class="tab-pane" id="date-and-time">
-				<fieldset>
+				<fieldset class="well">
 					<legend>Date and time of theft</legend>
 					<p>
-						Input date in format: DD.MM.YYYY and time in format: HH:MM or use widgets
+						Input date in format: DD.MM.YYYY and time in format: HH:MM or use the included widgets (just click it!)
 					</p>
 					<ul>
-						<li>
-							<label for="dateOfTheft">Date of Theft</label>
-							<input type="text" id="dateOfTheft" name="dateOfTheft" required="required" />
-						</li>
-						<li>
-							<label for="lastSeen">Time from</label>
-							<input type="text" name="lastSeen" value="" id="lastSeen" />
-						</li>
-						<li>
-							<label for="noticedTheft">Time to</label>
-							<input type="text" name="noticedTheft" value="" id="noticedTheft" />
-						</li>
+						<?php
+							inputHelper('dateOfTheft', 'li', 'Click here to add a date', true);
+							inputHelper('lastSeen', 'li');
+							inputHelper('noticedTheft', 'li');
+						?>
 					</ul>
 				</fieldset>
 			</div>
@@ -110,37 +86,18 @@ require_once "views/base.view.php";
 			<div class="tab-pane" id="your-bike">
 
 				<fieldset class="well">
-					<legend>Details of the bike</legend>
+					<legend>Details of your bike</legend>
 					<div class="row-fluid">
 						<ul class="span4">
-							<li>
-								<label for="biketype">biketype</label>
-								<input type="text" id="bikeType" name="bikeType" required="required" />
-							</li>
-							<li>
-								<label for="color">color</label>
-								<input type="text" id="color" name="color" required="required" />
-							</li>
-							<li>
-								<label for="comment">description</label>
-								<textarea rows="5" col="50" id="comment" name="comment"> </textarea>
-							</li>
-							<li>
-								<label for="price">price in €</label>
-								<input type="text" id="price" name="price"/>
-							</li>
-							<li>
-								<label for="manufacturer">manufacturer</label>
-								<input type="text" id="manufacturer" name="manufacturer"/>
-							</li>
-							<li>
-								<label for="wheelSize">wheel size in inch</label>
-								<input type="text" id="wheelSize" name="wheelSize"/>
-							</li>
-							<li>
-								<label for="frameNumber">framenumber</label>
-								<input type="text" id="frameNumber" name="frameNumber"/>
-							</li>
+							<?php
+								inputHelper('bikeType', 'li', 'Mountainbike, Racing-Bike etc.', true);
+								inputHelper('color', 'li', 'green, black, purple', true);
+								inputHelper('comment', 'li', '...', false, 'textarea');
+								inputHelper('price', 'li', 'approx. when stolen');
+								inputHelper('manufacturer', 'li', 'Cannondale, Bianchi...');
+								inputHelper('wheelSize', 'li', 'usually 26 or 28');
+								inputHelper('frameNumber', 'li', '');
+							?>
 						</ul>
 
 						<div class="span8">
@@ -179,124 +136,76 @@ require_once "views/base.view.php";
 
 
 			<div class="tab-pane" id="police-information">
-				<fieldset>
-					<legend>Police related informations</legend>
+				<fieldset class="well">
+					<legend>Police related information</legend>
 					<ul>
-						<li>
-						<label for="registrationCode">police registered number</label>
-						<input type="text" id="registrationCode" name="registrationCode" />
-					</li>
-					<li>
-						<label for="police">police station in charge</label>
-						<input type="text" id="policeStation" name="policeStation" />
-					</li>
+						<?php
+							inputHelper('registrationCode', 'li', '');
+							inputHelper('policeStation', 'li', '');
+						?>
 					</ul>
 				</fieldset>
 			</div>
 
 			<div class="tab-pane" id="summary">
-				<h2>Summary</h2>
+				<div class="well">
+					<h2>Summary</h2>
 
-				<div class="row-fluid">
-					<table class="span4 table table-condensed">
-						<tr>
-							<td>Street</td>
-							<td id="summary-road"></td>
-						</tr>
-						<tr>
-							<td>House number</td>
-							<td id="summary-house_number"></td>
-						</tr>
-						<tr>
-							<td>Postal Code</td>
-							<td id="summary-postcode"></td>
-						</tr>
-						<tr>
-							<td>City</td>
-							<td id="summary-city"></td>
-						</tr>
-						<tr>
-							<td>Longitude</td>
-							<td id="summary-lon"></td>
-						</tr>
-						<tr>
-							<td>Latitude</td>
-							<td id="summary-lat"></td>
-						</tr>
-					</table>
+					<div class="row-fluid">
+						<table class="span4 table table-condensed">
+							<?php
+								summaryHelper('road');
+								summaryHelper('house_number');
+								summaryHelper('postcode');
+								summaryHelper('city');
+								summaryHelper('lon');
+								summaryHelper('lat');
+							?>
+						</table>
 
-					<table class="span4 table table-condensed">
-						<tr>
-							<td>Date of theft</td>
-							<td id="summary-dateOfTheft"></td>
-						</tr>
-						<tr>
-							<td>Time from</td>
-							<td id="summary-lastSeen"></td>
-						</tr>
-						<tr>
-							<td>Time to</td>
-							<td id="summary-noticedTheft"></td>
-						</tr>
-						<tr>
-						  <td>Coded Number</td>
-						  <td id="summary-registrationCode"></td>
-						</tr>
-						<tr>
-						  <td>Police Station</td>
-						  <td id="summary-policeStation"></td>
-						</tr>
-					</table>
+						<table class="span4 table table-condensed">
+							<?php
+								summaryHelper('dateOfTheft');
+								summaryHelper('lastSeen');
+								summaryHelper('noticedTheft');
+								summaryHelper('registrationCode');
+								summaryHelper('policeStation');
+							?>
+						</table>
 
-					<table class="span4 table table-condensed">
-						<tr>
-							<td>Your biketype</td>
-							<td id="summary-bikeType"></td>
-						</tr>
-						<tr>
-							<td>Color</td>
-							<td id="summary-color"></td>
-						</tr>
-						<tr>
-							<td>Description</td>
-							<td id="summary-comment"></td>
-						</tr>
-						<tr>
-							<td>Price in €</td>
-							<td id="summary-price"></td>
-						</tr>
-						<tr>
-							<td>Manufacturer</td>
-							<td id="summary-manufacturer"></td>
-						</tr>
-						<tr>
-							<td>Wheel size in inch</td>
-							<td id="summary-wheelSize"></td>
-						</tr>
-						<tr>
-							<td>Framenumber</td>
-							<td id="summary-frameNumber"></td>
-						</tr>
-					</table>
-				</div>
-				<div class="row-fluid">
-
-					<div id="summary-images" class="span6">
-						<h4>Your Images</h4>
-
+						<table class="span4 table table-condensed">
+							<?php
+								summaryHelper('bikeType');
+								summaryHelper('color');
+								summaryHelper('comment');
+								summaryHelper('price');
+								summaryHelper('manufacturer');
+								summaryHelper('wheelSize');
+								summaryHelper('frameNumber');
+							?>
+						</table>
 					</div>
 
-					<div id="summary-components" class="span6">
-						<h4>Bike Components</h4>
+					<div class="row-fluid">
+						<div id="summary-images" class="span6">
+							<h4>Your Images</h4>
+							<div class="summary-images-container">
+							</div>
+						</div>
+
+						<div id="summary-components" class="span6">
+							<h4>Bike Components</h4>
+							<div class="summary-components-container">
+							</div>
+						</div>
 
 					</div>
-
 				</div>
 
 				<div class="row-fluid">
-					<button class="btn btn-primary">Publish my report</button>
-					<button class="btn">Publish and send to Facebook</button>
-					<button class="btn btn-print">Print this summary</button>
+					<button class="btn btn-primary pull-right">Publish my report</button>
+					<button class="btn btn-print pull-right">Print this summary</button>
+					<!-- TODO <button class="btn">Publish and send to Facebook</button> -->
 				</div>
 
 			</div>
@@ -307,7 +216,7 @@ require_once "views/base.view.php";
 
 <?php
 
-		}
 	}
+}
 
 ?>

@@ -18,7 +18,7 @@ class ReportService {
 	}
 
 
-	function saveNewReport($data) {
+	function saveNewReport($data, $bikeImages) {
 
 		$reportData = new ReportData();
 		$reportData->initialize();
@@ -26,7 +26,7 @@ class ReportService {
 
 		$reportData->components = $this->bikePartService->mergeBikeParts($data);
 
-		$this->reportRepository->saveReport($reportData);
+		$this->reportRepository->saveReport($reportData, $bikeImages);
 
 		return $reportData->getUniqueID();
 
@@ -62,8 +62,6 @@ class ReportService {
 		$report->wheelSize = (int) $data['wheelSize'];
 		$report->frameNumber = $data['frameNumber'];
 
-		// TODO this is wrong! -- only use saved images that are fine
-		// $this->images = $data['images'];
 		// $this->components = $data['components'];
 	}
 

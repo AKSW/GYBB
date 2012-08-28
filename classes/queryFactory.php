@@ -22,6 +22,10 @@ class QueryFactory extends SparqlConstants {
 
 		$this->graphURI = DEFAULT_LGD_GRAPH;
 	}
+	
+	function graphUri() {
+		return $this->graphURI;
+	}
 
 	function __destruct() {
 		$this->_closeConnection();
@@ -64,6 +68,20 @@ class QueryFactory extends SparqlConstants {
 		return $resultId;
 	}
 
+	public function ttl($ttl) {
+		$ttl = addcslashes($ttl, '\'\\');
+		$virtuosoPl = 'CALL DB.DBA.TTLP( \'' . $ttl . '\',\'\',\'' . $this->graphURI . '\',0)';
+		$resultId = odbc_exec($this->connection, $virtuosoPl);
+
+		if (false === $resultId) {
+			$message = sprintf('SPARQL Error: %s in query: %s', $this->getLastError(), htmlentities($sparqlQuery));
+			throw new RepositoryException($message);
+		}
+
+		return $resultId;
+		
+	}
+	
 	/**
 	* Returns the last ODBC error message and number.
 	*

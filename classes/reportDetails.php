@@ -16,10 +16,31 @@ class ReportDetails {
 
 
 	public function getReportDetails() {
-		$query = $this->buildSparqlQuery();
-
+		$preparedReportData = array();
+		$constants = new SparqlConstants();
 		$curl = new CurlHelper();
-		return $curl->getSparqlResults($query);
+
+		$query = $this->buildSparqlQuery();
+		$reportData = $curl->getSparqlResults($query);
+
+		foreach ($constants->allPrefixes as $short => $uri) {
+			// strip out all uris -- then we have the field-id
+			foreach ($reportData as $predObj) {
+				if (strpos($predObj->pred->value, $uri) !== false) {
+					$shortPred = str_replace($uri, '', $predObj->pred->value);
+
+					// create an array for images if there are any
+					// NOTE TODO - use this for bikeparts too
+					if ($shortPred === 'depiction') {
+						$preparedReportData[$shortPred][] = $predObj->obj->value;
+					} else {
+						$preparedReportData[$shortPred] = $predObj->obj->value;
+					}
+
+				}
+			}
+		}
+		return $preparedReportData;
 	}
 
 

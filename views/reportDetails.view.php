@@ -1,5 +1,6 @@
 <?php
 require_once('views/base.view.php');
+require_once('classes/utils.php');
 
 class ReportDetailsView extends BaseView {
 
@@ -9,29 +10,31 @@ class ReportDetailsView extends BaseView {
 		$this->singleReportData = $singleReportData;
 	}
 
-	protected function doShow() {
-
-		// TODO generate a global labels array -- use the values from there everywhere
-		$demLabels = array(
-      'creationDate' => 'Time of Creation'
-		);
+  protected function doShow() {
+    echo '<pre>' . print_r($this->singleReportData, 1) . '</pre>';
 
 		?>
 
 		<div class="fluid-row">
-
 			<h2>Your Report!</h2>
 
-			<table>
-			<?php foreach ($this->singleReportData as $field => $value) : ?>
-				<tr>
-					<td><?php echo /* $demLabels[$field]; */ $field; ?></td>
-					<td><?php echo $value; ?></td>
-				</tr>
-
-			<?php endforeach; ?>
+			<table class="table table-bordered table-striped">
+				<?php
+					foreach ($this->singleReportData as $field => $value) {
+						reportDetailsHelper($field, $value);
+					}
+				?>
 			</table>
+			<div class="images">
+				<?php
+					if (isset($this->singleReportData['depiction'])) {
+					foreach ($this->singleReportData['depiction'] as $img) { ?>
+				<a href="<?php echo $img ?>" class="lightbox" rel="bikeimages[bikeimages]">
+					<img src="/3rdparty/timthumb/timthumb.php?src=<?php echo $img; ?>&w=200" alt="" />
+				</a>
+				<?php } } ?>
 
+			</div>
 		</div>
 
 		<?php

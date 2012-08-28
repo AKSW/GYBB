@@ -17,13 +17,14 @@ class Validator {
 
 
 	private function validate($post) {
+
 		foreach($post as $name => $value) {
 			// the post data can be an array for images and components
 			// images will be handled by the ImageHandler-Class
 			if (is_array($value)) {
 				$tempArray = array();
 				foreach ($value as $key => $subValue) {
-          $tempArray[$key] = $this->cleanUp($subValue);
+					$tempArray[$key] = $this->cleanUp($subValue);
 				}
 				$this->cleanPostData[$name] = $tempArray;
 			} else {
@@ -41,7 +42,7 @@ class Validator {
 
 
 	public function getValidatedData() {
-    return $this->cleanPostData;
+		return $this->cleanPostData;
 	}
 
 

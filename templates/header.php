@@ -1,45 +1,8 @@
 <?php
 require_once('config/config.php');
 require_once('classes/user.php');
+require_once('templates/headerBase.php');
 ?>
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-	<title>getyourbikeback</title>
-	<meta charset="UTF-8" />
-	<base href="<?php echo BASE_URL; ?>" />
-	<?php
-		if (DEBUG === true) {
-	?>
-		<link rel="stylesheet" href="3rdparty/twitterBootstrap/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="3rdparty/jquery-ui/css/smoothness/jquery-ui-1.8.20.custom.css" />
-		<link rel="stylesheet" href="css/style.css" />
-		<link rel="stylesheet" href="css/print.css" />
-
-		<script src="js/debugging.js"></script>
-		<script src="js/jquery-1.7.2.js"></script>
-		<script src="3rdparty/twitterBootstrap/js/bootstrap.min.js"></script>
-		<script src="3rdparty/jquery-ui/js/jquery-ui-1.8.20.custom.min.js"></script>
-		<script src="3rdparty/jquery-ui/js/jquery-ui.timepicker.js"></script>
-		<script src="js/OpenLayers-2.11.js"></script>
-
-		<script type="text/javascript">
-				jQuery.baseURL = "<?php echo BASE_URL; ?>";
-		</script>
-		<script src="js/jquery.bikemap.js"></script>
-		<script src="js/main.js"></script>
-
-	<?php
-		} else {
-		// TODO the minified css does not exist yet
-	?>
-		<link rel="stylesheet" href="css/main.min.css" />
-	<?php
-		}
-	?>
-
-</head>
 
 <body>
 	<div class="navbar navbar-fixed-top">
@@ -52,39 +15,39 @@ require_once('classes/user.php');
 					<?php  // add nav items for logged-in users
 						if ($user = User::getCurrentUser()) { ?>
 					<li><a href="index.php?action=report">Add Report</a></li>
-                                        <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Export<b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                          <li class="nav-header">
-                                            choose format
-                                          </li>
-                                          <li>
-                                            <a href="#">RDF</a>
-                                          </li>
-                                          <li>
-                                            <a href="#">Turtle</a>
-                                          </li>
-                                          <li>
-                                            <a href="#">RDF/XML</a>
-                                          </li>
-                                          <li>
-                                            <a href="#">RDF</a>
-                                          </li>
-                                          <li class="divider">
-                                          </li>
-                                          <li class="nav-header">
-                                            Admin
-                                          </li>
-                                          <li>
-                                            <a href="#">Save Graph</a>
-                                          </li>
-                                          <li>
-                                            <a href="#">Clear Graph</a>
-                                          </li>
-                                        </ul>
-                                        </li>
-                                </ul>
-              
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export<b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li class="nav-header">
+							choose format
+						</li>
+						<li>
+							<a href="#">RDF</a>
+						</li>
+						<li>
+							<a href="#">Turtle</a>
+						</li>
+						<li>
+							<a href="#">RDF/XML</a>
+						</li>
+						<li>
+							<a href="#">RDF</a>
+						</li>
+						<li class="divider">
+						</li>
+						<li class="nav-header">
+							Admin
+						</li>
+						<li>
+							<a href="#">Save Graph</a>
+						</li>
+						<li>
+							<a href="#">Clear Graph</a>
+						</li>
+					</ul>
+					</li>
+				</ul>
+
 					<?php } ?>
 
 				</ul>

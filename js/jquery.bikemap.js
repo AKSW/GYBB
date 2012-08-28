@@ -10,6 +10,8 @@
  * in the element to be the map, e.g.:
  *
  * <div id="bikemap" data-bikemaptype="exploration"></div>
+ *
+ * jshint global OpenLayers: true
  */
 ;(function($, window, document, undefined) {
 
@@ -22,11 +24,11 @@
 		mapType: 'exploration',
 		startLon: 12.38050700,
 		startLat: 51.34384400,
+		zoom: 14,
 
 		// and the default options for the map
 		mapOptions: {
-			theme: null,
-			zoom: 14,
+			theme: false, // not working with 2.12rc4
 			scales: [50000000, 30000000, 10000000, 5000000],
 			projection: new OpenLayers.Projection("EPSG:900913"),
 			displayProjection: new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -38,7 +40,7 @@
 			minResolution: "auto",
 			minExtent: new OpenLayers.Bounds(-1, -1, 1, 1),
 			numZoomLevels: 19,
-			units: 'm'
+			units: 'm',
 		}
 	};
 
@@ -57,7 +59,8 @@
 		// this will be filled up later
 		this.map = {};
 		this.markers = {};
-		this.markersLayer = {};
+		this.markersLayer = false;
+		this.features = false;
 		this.startLonLat = {};
 		this.reportMarker = false;
 		this.suggested = [];
@@ -80,8 +83,7 @@
 		init: function () {
 			// get the current maptype from the element and store it for later use
 			this.options.mapType = this.$mapElement.data('bikemaptype');
-			this.options.mapOptions.zoom = this.$mapElement.data('bikemapzoom');
-
+			this.options.mapOptions = $.extend(this.options.mapOptions, this.options);
 			this.createMap();
 			this.addMapFeatures();
 		},
@@ -90,51 +92,73 @@
 		createMap: function() {
 			this.map = new OpenLayers.Map(this.mapElement,this.options.mapOptions);
 			this.map.addLayer(new OpenLayers.Layer.OSM());
-
 			this.zoomMapToCenter(this.options.startLon, this.options.startLat);
-			this.markersLayer = new OpenLayers.Layer.Markers("Reports", {
-				projection: new OpenLayers.Projection("EPSG:4326"),
-				visibility: true,
-				displayInLayerSwitcher: false
-			});
-
-			this.map.addLayer(this.markersLayer);
+			this.newMarkersLayer();
 		},
 
 
 		addMapFeatures: function() {
 			switch(this.options.mapType) {
+
 				case 'exploration':
-					// TODO this is just for testing
-					this.drawMarkers([
-						{ lat: 51.34384400, lon: 12.37050700, html: '<h2>Report, yay</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' },
-						{ lat: 51.34384400, lon: 12.37060700, html: '<h2>Report, 2</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' },
-						{ lat: 51.34384400, lon: 12.37070700, html: '<h2>Report, 3</h2><p>Testtest</p><p>More test... <a href="#">Link</a>' }
-					]);
-					this.registerMapEvents();
+					// initially get all reports by doing a zoom/move event
+					this.registerExplorationEvents();
+					this._eventMapMoveZoomEnd(null);
 					break;
 
 				case 'report':
-					this.registerMapEvents();
 					this.registerReportEvents();
 					this.geolocate();
 					break;
 
-				// TODO more cases?
-
 				default:
-					// TODO maybe the same as exploration?!
+					// initially get all reports by doing a zoom/move event
+					this._eventMapMoveZoomEnd(null);
 					break;
 			}
 		},
 
 
+		newMarkersLayer: function() {
+			if (!this.markersLayer) {
+				this.createMarkersLayer();
+			} else {
+        this.markersLayer.destroy();
+				this.createMarkersLayer();
+			}
+			this.map.addLayer(this.markersLayer);
+		},
+
+
+		createMarkersLayer: function() {
+			this.markersLayer = new OpenLayers.Layer.Markers("Reports", {
+				projection: new OpenLayers.Projection("EPSG:4326"),
+				visibility: true,
+				displayInLayerSwitcher: false
+			});
+		},
+
+
+		newFeatures: function() {
+			var that = this;
+			if (that.features) {
+				$.each(that.features, function() {
+					this.destroy();
+					this.destroyPopup();
+				});
+			}
+			that.features = [];
+		},
+
+
 		drawMarkers: function(markers) {
 			var that = this;
+			that.newMarkersLayer();
+			that.newFeatures();
 
 			// draw each marker on the map
 			$.each(markers, function() {
-				var lonLat, feature, marker, combined;
+				var lonLat, feature, marker, combined, html;
 
 				lonLat = new OpenLayers.LonLat(
 					parseFloat(this.lon), parseFloat(this.lat)
@@ -147,11 +171,17 @@
 				// create a feature with the given html
 				feature = new OpenLayers.Feature(that.markersLayer, lonLat);
 				feature.closeBox = true;
-				feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-					'autoSize': true,
-					'maxSize': new OpenLayers.Size(300,200)
+
+				feature.popupClass =	OpenLayers.Class(OpenLayers.Popup.Anchored, {
+					'autoSize': true
 				});
-				feature.data.popupContentHTML = this.html;
+
+				// set the html for the marker from type/color etc.
+				html = '<h2>' + this.bikeType + '</h2><p>Color: ' + this.color;
+				html += '<br />Date of Theft: ' + this.dateOfTheft;
+				html += '<br /><a href="index.php?action=reportDetails&reportID=' + this.reportID + '">Show Reportdetails</a>';
+
+				feature.data.popupContentHTML = html;
 				feature.data.overflow = "auto";
 
 				// create a marker from that feature, add click events and add it to the map
@@ -160,7 +190,7 @@
 				combined = {
 					that: that,
 					feature: feature
-				}
+				};
 				marker.events.register("mousedown", combined, that._eventMarkerMousedown);
 				that.markersLayer.addMarker(marker);
 
@@ -168,13 +198,17 @@
 				feature.popup = feature.createPopup(feature.closeBox);
 				that.map.addPopup(feature.popup);
 				feature.popup.hide();
+
+				// add the created feature to the array of features
+				that.features.push(feature);
 			});
+
 		},
 
 
 		drawSingleMarker: function(lon, lat) {
 			if (this.reportMarker) {
-        this.reportMarker.destroy();
+				this.reportMarker.destroy();
 			}
 			this.reportMarker = new OpenLayers.Marker(
 				new OpenLayers.LonLat(lon, lat).transform(
@@ -224,7 +258,7 @@
 		},
 
 
-		registerMapEvents: function() {
+		registerExplorationEvents: function() {
 			this.map.events.register('moveend', this, this._eventMapMoveZoomEnd);
 			this.map.events.register('zomeend', this, this._eventMapMoveZoomEnd);
 		},
@@ -238,9 +272,25 @@
 				// TODO wait 1-2 seconds before firing evt.
 				e.preventDefault();
 				that._lonLatLookup();
-			})
+			});
 
 			this.map.events.register('click', this, this._eventMapClick);
+		},
+
+
+		getReportsInArea: function(left, right, top, bottom) {
+			var that = this;
+
+			$.getJSON($.baseURL + 'index.php', {
+				'action': 'reportsInArea',
+				'left': left,
+				'right': right,
+				'top': top,
+				'bottom': bottom
+			}, function(response) {
+				that.drawMarkers(response);
+			});
+
 		},
 
 
@@ -248,7 +298,8 @@
 		//==========================================================================
 
 		_eventMarkerMousedown: function(evt) {
-			if (this.feature.popup == null) {
+			var currentPopup; // TODO not needed?
+			if (this.feature.popup === null) {
 				this.feature.popup = this.feature.createPopup(this.feature.closeBox);
 				this.that.map.addPopup(this.feature.popup);
 				this.feature.popup.show();
@@ -262,8 +313,7 @@
 
 		_eventMapMoveZoomEnd: function(evt) {
 			var bounds = this.map.getExtent().transform(this.map.projection, this.map.displayProjection);
-			// TODO do sth usefuel with the bounds data here
-			log(this._constructURI($.baseURL, bounds));
+			this.getReportsInArea(bounds.left, bounds.right, bounds.top, bounds.bottom);
 		},
 
 
@@ -271,7 +321,6 @@
 			var lonLat = this.map.getLonLatFromViewPortPx(evt.xy);
 			lonLat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
 			this.drawSingleMarker(lonLat.lon, lonLat.lat);
-
 
 			this.$lon.val(lonLat.lon);
 			this.$lat.val(lonLat.lat);
@@ -281,11 +330,6 @@
 
 		// private helper functions
 		//==========================================================================
-
-		_constructURI: function(baseURL, bounds) {
-			return baseURL + "?x0=" + bounds.left + "&y0=" + bounds.top + "&x1=" + bounds.right + "&y1=" + bounds.bottom;
-		},
-
 
 		_reverseLonLatLookup: function(lon, lat) {
 			var that = this;
@@ -307,9 +351,9 @@
 			var htmlout = '<h2>Did you mean...</h2>';
 
 			// TODO hardcoded GERMANY... /de/ - remove this?
-			var url = 'http://nominatim.openstreetmap.org/search/de/' + that.$postcode.val() + ' '
-							+ that.$city.val() + '/' + that.$road.val() + '/' + that.$house_number.val()
-							+ '?format=json&polygon=1&addressdetails=1&osm_type=N';
+			var url = 'http://nominatim.openstreetmap.org/search/de/' + that.$postcode.val() + ' ' +
+					that.$city.val() + '/' + that.$road.val() + '/' + that.$house_number.val() +
+					'?format=json&polygon=1&addressdetails=1&osm_type=N';
 			url = encodeURI(url);
 			$.getJSON(url, function(data) {
 				that.suggested = [];
@@ -321,9 +365,9 @@
 
 				that.$suggestions.html(htmlout);
 				$('.suggest-link').on('click', function(e) {
-          e.preventDefault();
+					e.preventDefault();
 					var placeID = $(this).attr('href').replace('place_id#', '');
-          var place = that.suggested[placeID];
+					var place = that.suggested[placeID];
 
 					// TODO refactor! see _reverseLonLatLookup
 					that.$road.val(place.address.road);
@@ -371,6 +415,6 @@
 				}
 			});
 		}
-	}
+	};
 })(jQuery, window, document);
 

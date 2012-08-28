@@ -44,7 +44,7 @@ class BikePartService {
 		foreach($bikeParts as $part) {
 			$this->repository->mergeBikePart($part);
 		}
-		
+
 		return $bikeParts;
 	}
 

@@ -17,16 +17,12 @@ class BikePartRepository extends QueryFactory {
 		parent::__construct();
 	}
 
-	protected function toIriExpression($pre, $uri) {
-		return $pre . ":" . $uri;
-	}
-
 	// Holt den BikePartType aus dem Repository legt ihn ggf. an.
 	public function mergeBikePartType($bikePartType) {
 		// 1. pruefe ob es den typ schon gibt, wenn ja gib den bikepartype zurueck
 		//  2. wenn nicht anlegen
 
-		if (!$this->existsBikePartType($this->toIriExpression(SparqlConstants::GYBBO , $bikePartType->class))) {
+		if (!$this->existsBikePartType($this->ttl_uri(SparqlConstants::GYBBO , $bikePartType->class))) {
 			// build bike part ontology
 			//build class
 			$sBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
@@ -44,6 +40,7 @@ class BikePartRepository extends QueryFactory {
 			$predicatePredicates = array();
 			$predicatePredicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, SparqlConstants::RDFS, SparqlConstants::RDFS_PROPERTY);
 			$predicatePredicates[] = predicateUri(SparqlConstants::RDFS, SparqlConstants::RDFS_SUBPROP, SparqlConstants::GYBBO, SparqlConstants::BIKEFACTREL);
+			$predicatePredicates[] = predicateLiteral(SparqlConstants::RDFS, SparqlConstants::RDFS_LABEL, $bikePartType->label);
 			$sBuilder->predicates($predicatePredicates);
 			$this->execSparql($sBuilder->toSparql());
 
@@ -59,13 +56,12 @@ class BikePartRepository extends QueryFactory {
 		$bikePartType = $bikePart->type;
 
 		if(!$this->existsBikePartWithType(
-				$this->toIriExpression(parent::GYBB, $bikePart->uri),
-				$this->toIriExpression(parent::GYBBO, $bikePartType->class))) {
+				$this->ttl_uri(parent::GYBB, $bikePart->uri),
+				$this->ttl_uri(parent::GYBBO, $bikePartType->class))) {
 
 			$pBuilder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
 			$pBuilder->subject(parent::GYBB, $bikePart->uri);
 			$predicates = array();
-			$predicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, SparqlConstants::OWL, SparqlConstants::OWL_CLASS);
 			$predicates[] = predicateUri(SparqlConstants::RDF, SparqlConstants::RDF_TYPE, parent::GYBBO, $bikePartType->class);
 			$predicates[] = predicateLiteral(SparqlConstants::RDFS, SparqlConstants::RDFS_LABEL, $bikePart->label);
 			$pBuilder->predicates($predicates);
@@ -79,10 +75,10 @@ class BikePartRepository extends QueryFactory {
 	private function existsBikePartType($typeUri) {
 		$query = $this->fullPrefixList;
 		$query .="
-SELECT COUNT DISTINCT ?s WHERE {
-?s rdf:type owl:ObjectProperty .
-FILTER( ?s = " . $typeUri . ")
-}";
+			SELECT COUNT DISTINCT ?s WHERE {
+			?s rdf:type owl:ObjectProperty .
+			FILTER( ?s = " . $typeUri . ")
+			}";
 	 return $this->exists($query);
 
 	}
@@ -90,10 +86,10 @@ FILTER( ?s = " . $typeUri . ")
 	private function existsBikePartWithType($partUri, $typeUri) {
 		$query = $this->fullPrefixList;
 		$query .="
-SELECT COUNT DISTINCT ?s, ?o WHERE {
-?s rdf:type ?o .
-FILTER( ?s = " . $partUri .  " && ?o = ". $typeUri . ")
-}";
+			SELECT COUNT DISTINCT ?s, ?o WHERE {
+			?s rdf:type ?o .
+			FILTER( ?s = " . $partUri .  " && ?o = ". $typeUri . ")
+			}";
 		return $this->exists($query);
 	}
 
@@ -108,7 +104,6 @@ FILTER( ?s = " . $partUri .  " && ?o = ". $typeUri . ")
 		}
 
 		$value = array_values($resultArray);
-		//print_r($value);
 		return is_int($value[0]) && $value[0] > 0;
 	}
 

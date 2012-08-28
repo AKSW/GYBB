@@ -56,6 +56,7 @@ class SparqlConstants {
 	const REGISTRYCODE = "registryCode";
 	const REPORTEDTO = "reportedTo";
 	const DESCRIBESTHEFTOF = "describesTheftOf";
+	const DEPICTION = "depiction";
 
 	const CREATED = "created";
 	const DATEOFTHEFT = "dateOfTheft";
@@ -93,10 +94,15 @@ class SparqlConstants {
 	}
 
 	/**
-	 * Hilfsmethode für URIs
+	 * Hilfsmethode für URIs -- set hardcoded to true if your want the literal uri
+	 * and not something like gybbo:nanana
 	 */
-	function ttl_uri($prefix, $value) {
-		return (string) $prefix . ':' . (string) $value . ' ';
+	function ttl_uri($prefix, $value, $hardcoded = true) {
+		if ($hardcoded)  {
+			return (string) '<' . $this->allPrefixes[$prefix] . $value . '>';
+		} else {
+			return (string) $prefix . ':' . (string) $value . ' ';
+		}
 	}
 
 	function ttl_literal($value) {

@@ -26,5 +26,8 @@ define('VOS_DSN', 'VOS');
 define('VOS_USER', 'dba');
 define('VOS_PASSWORD', 'dba');
 
+define('MAX_UPLOAD_SIZE', 1024 * 1024); // 1 MB
+define('MIME_TYPE', 'image/jpeg');
+define('UPLOAD_FOLDER', '/var/www/getyourbikeback/web/uploads/'); // absolute server path
 
 ?>

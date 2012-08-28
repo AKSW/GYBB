@@ -2,7 +2,19 @@ $(document).ready(function() {
 
 	// add the map to all map elements
 	if ($('.bikemap').length) {
-		$('.bikemap').bikemap({
+		var $bikemaps = $('.bikemap');
+		$bikemaps.each(function() {
+			var options = {};
+			var mapType = $(this).data('bikemaptype');
+
+			// set some options for the map depending on type
+			if (mapType === 'exploration') {
+				options = { zoom: 13 }
+			} else if (mapType === 'report') {
+				options = { zoom: 15 }
+			}
+
+			$(this).bikemap(options);
 		});
 	}
 
@@ -12,16 +24,25 @@ $(document).ready(function() {
 		window.print();
 	});
 
+	// Add Colorbox to every lightbox-link with click-enlarge
+	if ($('a.lightbox').length) {
+		$('a.lightbox').colorbox({
+			opacity: 0.8,
+			loop: false,
+			maxWidth: '90%',
+			maxHeight: '90%',
+		});
+	}
 
 	// REPORT form stuff
 	//================================================================================
 
 	// datepicker for dateoftheft field
-	// TODO pre-formatting date here (y-m-d) would be better?!
 	if ($('#dateOfTheft').length) {
 		$('#dateOfTheft').datepicker({
 			firstDay: 1, // i dont like mondaaaaaaaays
 			showAnim: 'fade',
+			maxDate: '0d',
 			dateFormat: "dd.mm.yy",
 		});
 	}
@@ -71,6 +92,13 @@ $(document).ready(function() {
 		});
 	}
 
+	if ($('.btn-home-boxes').length) {
+		$('.btn-home-boxes').on('click', function(e) {
+			e.preventDefault();
+			$('.sidebar .box').toggleClass('hidden');
+		});
+	}
+
 
 
 	//================================================================================
@@ -86,7 +114,7 @@ $(document).ready(function() {
 			if (trimmedVal.length === 0) { // if the field has no useful value
 				$input.addClass('error');
 				$badge.addClass('badge-important');
-				$('#summary-' + $input.attr('id')).text('Please enter correct value').addClass('alert');
+				$('#summary-' + $input.attr('id')).text('Please enter a correct value').addClass('alert');
 			} else {
 				$input.removeClass('error');
 				$badge.removeClass('badge-important').addClass('badge-success');
@@ -96,25 +124,34 @@ $(document).ready(function() {
 	}
 
 	function updateSummary() {
+		$('.summary-components-container').html('');
+    var bikepartsHTML = '';
+		var imagesHTML = '';
+
 		$('#view-report input[type="text"], #view-report input[type="file"], #view-report textarea').each(function() {
 			var $input = $(this);
 			var summaryID = '#summary-' + $input.attr('id');
 
 			if ($input.attr('type') === 'file') {
-				$('#summary-images').html($('#summary-images').html() + $input.val() + '<br />');
+				if ($input.val().length) {
+					imagesHTML += $input.val() + ': ' + $input.val() + '<br />';
+				}
 
 			} else if ($input.attr('name') ==='comptype[]' || $input.attr('name') === 'compname[]') {
+
 				if ($input.attr('name') === 'comptype[]') {
 					var number = $input.parent().data('bikeparts-counter');
-					$('#summary-components').html(
-						/* TODO bug with colon */
-						$('#summary-components').html() + $input.val() + ': ' + $('#compname-' + number).val() + '<br />'
-					);
+					if ($input.val().length) {
+						bikepartsHTML += $input.val() + ': ' + $('#compname-' + number).val() + '<br />';
+					}
 				}
 			} else {
 				$(summaryID).text($input.val());
 			}
 		});
+
+		$('.summary-components-container').html(bikepartsHTML);
+		$('.summary-images-container').html(imagesHTML);
 
 	}
 
@@ -151,7 +188,7 @@ $(document).ready(function() {
 		$newParts.attr('data-bikeparts-counter', counter);
 		$newParts.find('label[for^="comptype"]').attr('for', 'comptype-' + counter);
 		$newParts.find('label[for^="compname"]').attr('for', 'compname-' + counter);
-		$newParts.find('input[id^="comptype"]').attr('id', 'comptype-' + counter).val('');
+		$newParts.find('input[id^="comptype"]').attr('id', 'comptype-' + counter).val('').focus();
 		$newParts.find('input[id^="compname"]').attr('id', 'compname-' + counter).val('');
 		$newParts.find('button').on('click', function(e) {
 			e.preventDefault();

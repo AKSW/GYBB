@@ -38,7 +38,7 @@ class ReportData {
 		*/
 	function initialize() {
 		$this->id = date('YmdHis-') . User::getCurrentUser()->getHash();
-		$this->creationDate = date_format(date_create(), 'Y-m-d');
+		$this->created = date_format(date_create(), 'Y-m-d');
 		$this->user = User::getCurrentUser();
 
 	}

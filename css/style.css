@@ -1,10 +1,19 @@
 /*=============== base styles ===============*/
+/* overwrite img max-width set in bootstrap */
+img {
+  max-width: none;
+}
+
 form ul {
 	margin: 0;
 }
 
 form li {
 	list-style: none;
+}
+
+legend {
+  border-bottom: 0;
 }
 
 
@@ -20,6 +29,7 @@ form li {
 
 #welcome {
 	position: relative;
+	margin-top: 20px;
 }
 
 #btn-start {
@@ -46,7 +56,8 @@ form li {
 
 
 /*=============== modules classes ===============*/
-.box {
+.box,
+.olPopup {
 	width: 200px;
 	padding: 20px;
 	margin-bottom: 20px;
@@ -57,7 +68,6 @@ form li {
 .bikemap {
 	background-color: #eee;
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-	margin-bottom: 20px;
 }
 
 .bikemap-report {
@@ -84,6 +94,29 @@ form li {
 	width: 154px; height: 22px;
 }
 
+.btn-findme {
+  margin-top: 20px;
+}
+
+.bikeparts label {
+  margin-right: 1.5em;
+}
+
+.bikeparts,
+#summary .row-fluid {
+  margin-bottom: 20px;
+}
+
+.btn-print {
+  margin-right: 20px;
+}
+
+/*=============== open layers style ===============*/
+
+.olPopupContent {
+  overflow: hidden !important ;
+}
+
 
 /*=============== helpers ===============*/
 
@@ -91,6 +124,10 @@ form li {
 	color: transparent;
 	font: 0/0 a;
 	background-repeat: no-repeat;
+}
+
+.hidden {
+  display: none;
 }
 
 
