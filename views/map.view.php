@@ -1,16 +1,16 @@
 <?php
-require_once "views/base.view.php";
+require_once('views/base.view.php');
 
-	class MapView extends BaseView {
+class MapView extends BaseView {
 
-		protected function doShow() {
-			
-			?>
-	
-			<div id="map"></div>
+	protected function doShow() {
 
-  <?php
-		}
+		?>
+
+		<div class="bikemap bikemap-exploration" data-bikemaptype="exploration"></div>
+
+		<?php
 	}
+}
 
 ?>

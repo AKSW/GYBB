@@ -1,16 +1,14 @@
 <?php
-		require_once 'views/home.view.php';
-	
+require_once('views/redirect.view.php');
 
-	class LogoutController {
-		
-		public function execute() {
-			session_destroy();
-			$view = new HomeView();
-			return $view;
-		}
-		
+class LogoutController {
+
+	public function execute() {
+		session_destroy();
+		return new RedirectView('/index.php?action=home');
 	}
+
+}
 
 
 ?>

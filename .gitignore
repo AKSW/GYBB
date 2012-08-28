@@ -4,5 +4,4 @@ id_gybb
 id_gybb.pub
 nbproject/*
 config.localconf.php
-uploads/*
-.project
+

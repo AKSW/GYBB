@@ -1,0 +1,29 @@
+@prefix contact: <http://www.w3.org/2000/10/swap/pim/contact#> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dbp: <http://dbpedia.org/resource/> .
+@prefix dbpedia2: <http://dbpedia.org/property/> .
+@prefix dbpedia: <http://dbpedia.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix gybb: <http://getyourbikeback.webgefrickel.de#> . 
+@prefix gybbo: <http://getyourbikeback.webgefrickel.de/ontology/> . 
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix virtrdf: <http://www.openlinksw.com/schemas/virtrdf#> .
+
+
+gybbo:Report rdf:type owl:Class ;
+    rdfs:label 'Berichtsklasse'.
+
+gybbo:bikeFact rdf:type owl:Class ;
+               rdfs:label 'Bike Fakten';
+               rdfs:subClassOf owl:Thing .
+
+gybbo:bikeFactRelation
+               rdf:type rdfs:Property ;
+               rdfs:range gybbo:bikeFact;
+               rdfs:domain gybbo:Report .

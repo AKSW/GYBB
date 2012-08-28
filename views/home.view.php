@@ -8,18 +8,9 @@ require_once "views/base.view.php";
 
         <!-- TODO remove navigation, not needed on this pages?! -->
         <nav id="nav">
-          <ul class="nav nav-pills">
-            <li><a href="index.php?action=home">Home</a></li>
-            <li><a href="index.php?action=report">Add Report</a></li>
-            <li><a href="index.php?action=map">Map</a></li>
-          </ul>
         </nav>
 
         <h2>Welcome!</h2>
-        <p>
-          <a href="index.php?action=facebook" class="ir btn-facebook"></a>
-        </p>
-
 
         <section id="welcome">
           <div class="bikemap bikemap-home" data-bikemaptype="exploration"></div>

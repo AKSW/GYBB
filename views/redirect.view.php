@@ -1,17 +1,18 @@
 <?php
 
+class RedirectView {
 
-	class RedirectView {
-		
-		private $target;
-		
-		function __construct($toUrl) {
-			$this->target = $toUrl;
-		}
-		
-		
-		public function show() {
-			header("Location: " . $this->target);
-		}
-		
+	private $target;
+
+	function __construct($toUrl) {
+		$this->target = $toUrl;
 	}
+
+
+	public function show() {
+		header("Location: " . $this->target);
+	}
+
+}
+
+?>

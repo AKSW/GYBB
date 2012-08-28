@@ -1,11 +1,11 @@
 <?php
 
 require_once 'config/config.php';
-
-class QueryFactory {
+require_once 'classes/sparqlBuilder.php';
+class QueryFactory extends SparqlConstants {
     /* Default Graph URI */
 
-    const DEFAULT_LGD_GRAPH = "http://getyourbikeback.webgefrickel.de/reports.rdf";
+      const DEFAULT_LGD_GRAPH = "http://getyourbikeback.webgefrickel.de/reports.rdf";
 
     private $connection;
     private $graphURI;
@@ -32,6 +32,14 @@ class QueryFactory {
         $this->_closeConnection();
     }
 
+    function insertPrefix() {
+      return "INSERT INTO <" . $this->graphURI() . "> {\n";
+    }
+    
+    function insertSuffix() {
+      return "  } \n";
+    }
+    
     function asUniqueIdentifier($iri, $sequence) {
             return '`sql:sprintf_iri("' .  $iri . '#%s" , sql:sequence_next("' . $sequence . '"))`';
     }
@@ -111,6 +119,15 @@ class QueryFactory {
         if (null !== $this->connection) {
             $message = sprintf('%s (%i)', odbc_errormsg($this->connection), odbc_error($this->connection));
             return $message;
+        }
+    }
+    
+    
+    public function fetchResult($resultId) {
+        if ($resultId) {
+          return odbc_fetch_array($resultId);
+        } else {
+          return false;
         }
     }
 

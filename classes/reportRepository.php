@@ -29,7 +29,7 @@ select  ?subject, ?o where  {?subject  geo:lon ?o. FILTER(?o > 12.0)}
     
     public function saveReport($report) {
         require_once 'classes/sparqlBuilder.php';
-        $builder = new SparqlBuilder("INSERT INTO <" . $this->graphURI() . "> {\n", "\n}");
+        $builder = new SparqlBuilder($this->insertPrefix(), $this->insertSuffix());
         $builder = $this->triplifyReportData($report, $builder);
         
         $this->execSparql($builder->toSparql());
@@ -43,6 +43,7 @@ select  ?subject, ?o where  {?subject  geo:lon ?o. FILTER(?o > 12.0)}
                     
                     $predicates = array();
                     $predicates[] = predicateLiteral(SparqlBuilder::DC, "reportData", $reportData->user);
+                    $predicates[] = predicateUri(SparqlBuilder::RDF, SparqlBuilder::RDF_TYPE,  SparqlBuilder::GYBBO, SparqlBuilder::REPORT );
                     $predicates[] = typedLiteral(SparqlBuilder::DC, "creationDate", $reportData->creationDate, SparqlBuilder::XSD_DATE);
                     
                     if (isset($reportData->dateoftheft) && is_a($reportData->dateoftheft, 'DateTime')) {

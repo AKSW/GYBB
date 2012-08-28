@@ -14,7 +14,7 @@ class FacebookController {
 
 	function __construct() {
 		$this->fb = new Facebook(array('appId' => APP_ID, 'secret' => APP_SECRET));
-                  Facebook::$CURL_OPTS[CURLOPT_CONNECTTIMEOUT] = 30;
+		Facebook::$CURL_OPTS[CURLOPT_CONNECTTIMEOUT] = 30;
 	}
 
 

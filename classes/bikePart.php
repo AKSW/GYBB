@@ -9,6 +9,14 @@
  */
 class BikePart {
   
+  public $bikePartType;
+  
+  public $value;
+  
+  function __construct($value, $type) {
+    $this->bikePartType = $type;
+    $this->value = $value;
+  }
   
   
   
@@ -20,13 +28,17 @@ class BikePartType {
     //RDFS label
     public $label;
     
-    public $uri;
+    //Owl Class
+    public $class;
+    
+    //Owl Predicate
+    public $predicate;
     
     function __construct($label) {
       $this->label = $label;
       require_once 'classes/utils.php';
-      $this->uri = urlencode(firstCharToUpper($label));
-        
+      $this->class = urlencode(firstCharToUpper($label));
+        $this->predicate = urlencode(firstCharToLower($label) );
     } 
     
 
